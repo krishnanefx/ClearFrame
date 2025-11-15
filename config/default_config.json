@@ -1,0 +1,40 @@
+{
+  "agent": {
+    "model": "gpt-4",
+    "temperature": 0.7,
+    "max_iterations": 10,
+    "timeout": 300
+  },
+  "cache": {
+    "enabled": true,
+    "max_size": 1000,
+    "default_ttl": 3600
+  },
+  "state": {
+    "max_history": 100,
+    "persistence_enabled": true,
+    "persistence_dir": "./data/state"
+  },
+  "tools": {
+    "search": {
+      "enabled": true,
+      "rate_limit": 60,
+      "timeout": 30
+    },
+    "summarization": {
+      "enabled": true,
+      "max_length": 500,
+      "timeout": 60
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "./logs/agent.log"
+  },
+  "api_keys": {
+    "openai": null,
+    "valyu": null,
+    "news_api": null
+  }
+}

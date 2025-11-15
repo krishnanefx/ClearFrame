@@ -1,0 +1,72 @@
+{
+  "sources": [
+    {
+      "type": "rss",
+      "url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+      "name": "New York Times - World",
+      "tags": {
+        "region": "global",
+        "state_aligned": false,
+        "independent": true,
+        "diaspora": false,
+        "language": "en"
+      },
+      "refresh_interval": 1800
+    },
+    {
+      "type": "rss",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "name": "BBC World News",
+      "tags": {
+        "region": "global",
+        "state_aligned": false,
+        "independent": true,
+        "diaspora": false,
+        "language": "en"
+      },
+      "refresh_interval": 1800
+    },
+    {
+      "type": "url",
+      "url": "https://www.aljazeera.com/news/",
+      "name": "Al Jazeera",
+      "tags": {
+        "region": "middle_east",
+        "state_aligned": false,
+        "independent": true,
+        "diaspora": false,
+        "language": "en"
+      },
+      "refresh_interval": 3600
+    },
+    {
+      "type": "api",
+      "url": "https://newsapi.org/v2/top-headlines",
+      "name": "NewsAPI - Top Headlines",
+      "auth_type": "api_key",
+      "auth_key": "${NEWS_API_KEY}",
+      "params": {
+        "country": "us",
+        "category": "general"
+      },
+      "tags": {
+        "region": "north_america",
+        "state_aligned": false,
+        "independent": true,
+        "diaspora": false,
+        "language": "en"
+      },
+      "refresh_interval": 3600
+    }
+  ],
+  "source_lists": [
+    {
+      "type": "github",
+      "url": "https://raw.githubusercontent.com/example/diaspora-sources/main/blogs.json",
+      "format": "json",
+      "tags": {
+        "diaspora": true
+      }
+    }
+  ]
+}
