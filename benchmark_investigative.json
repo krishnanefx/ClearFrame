@@ -1,0 +1,28 @@
+{
+  "set": "investigative",
+  "total_queries": 2,
+  "total_cost_usd": 0.0235,
+  "avg_search_latency_ms": 6746.84,
+  "avg_analysis_latency_ms": 44250.93,
+  "emissions_kg": null,
+  "rows": [
+    {
+      "query": "supply chain vulnerabilities for semiconductor manufacturing",
+      "mode": "agent",
+      "tools": "citations,credibility,evidence",
+      "articles": 8,
+      "cost_usd": 0.0115,
+      "search_latency_ms": 7779.95,
+      "analysis_latency_ms": 48290.44
+    },
+    {
+      "query": "disinformation campaigns targeting elections",
+      "mode": "agent",
+      "tools": "narrative,propaganda,fact_check",
+      "articles": 8,
+      "cost_usd": 0.012,
+      "search_latency_ms": 5713.72,
+      "analysis_latency_ms": 40211.42
+    }
+  ]
+}

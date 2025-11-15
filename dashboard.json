@@ -1,0 +1,242 @@
+
+🔑 Environment:
+  VALYU_API_KEY: True ************************************ujiS
+  HOLISTIC_AI_TEAM_ID: True ************************_004
+  HOLISTIC_AI_API_TOKEN: True ***************************************_FJA
+
+============================================================
+Query: war in sudan
+Mode: radar
+============================================================
+
+
+💰 Cost Summary:
+  CPM Deduction: 7.5
+  Total Cost (USD): 0.0075
+  Characters Returned: 180962
+  Results Returned: 5/5
+
+📰 Articles (preview):
+  1. The truth about the civil war in Sudan – People's World [web] https://peoplesworld.org/article/the-truth-about-the-civil-war-in-sudan/?utm_source=valyu.ai&utm_medium=referral
+  2. War in Sudan: Humanitarian, fighting, control developments, October 2025 | Sudan war News | Al Jazeera [web] https://www.aljazeera.com/news/2025/10/31/war-in-sudan-october-round-up?utm_source=valyu.ai&utm_medium=referral
+  3. Sudanese civil war (2023–present) - Wikipedia [web] https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=referral
+  4. Second Sudanese Civil War - Wikipedia [web] https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral
+  5. The State Of The Civil War In Sudan : 1A : NPR [web] https://www.npr.org/2025/11/13/nx-s1-5608361/the-state-of-the-civil-war-in-sudan?utm_source=valyu.ai&utm_medium=referral
+
+📡 Censorship Radar Mode...
+
+📊 Radar Dashboard Payload:
+
+{
+  "version": 1,
+  "scale_of_censorship": -0.6,
+  "severity": "reverse-gap",
+  "union_topics": [
+    "casualties",
+    "foreign_actors",
+    "governance",
+    "humanitarian",
+    "stability"
+  ],
+  "bias_vectors": [
+    {
+      "source": "peoplesworld.org",
+      "class": "other",
+      "lexical_loadedness": 0.0,
+      "sentiment_proxy": 1.0,
+      "topics_present": [],
+      "omissions": [
+        "casualties",
+        "foreign_actors",
+        "governance",
+        "humanitarian",
+        "stability"
+      ],
+      "omission_gap": 1.0,
+      "blame_targets": []
+    },
+    {
+      "source": "aljazeera.com",
+      "class": "international",
+      "lexical_loadedness": 0.0,
+      "sentiment_proxy": 1.0,
+      "topics_present": [
+        "humanitarian",
+        "foreign_actors"
+      ],
+      "omissions": [
+        "casualties",
+        "governance",
+        "stability"
+      ],
+      "omission_gap": 0.6,
+      "blame_targets": [
+        "government"
+      ]
+    },
+    {
+      "source": "en.wikipedia.org",
+      "class": "other",
+      "lexical_loadedness": 0.0208,
+      "sentiment_proxy": 0.0,
+      "topics_present": [
+        "stability"
+      ],
+      "omissions": [
+        "casualties",
+        "foreign_actors",
+        "governance",
+        "humanitarian"
+      ],
+      "omission_gap": 0.8,
+      "blame_targets": [
+        "government"
+      ]
+    },
+    {
+      "source": "en.wikipedia.org",
+      "class": "other",
+      "lexical_loadedness": 0.0,
+      "sentiment_proxy": 0.0,
+      "topics_present": [
+        "governance"
+      ],
+      "omissions": [
+        "casualties",
+        "foreign_actors",
+        "humanitarian",
+        "stability"
+      ],
+      "omission_gap": 0.8,
+      "blame_targets": [
+        "government"
+      ]
+    },
+    {
+      "source": "npr.org",
+      "class": "other",
+      "lexical_loadedness": 0.0,
+      "sentiment_proxy": 0.0,
+      "topics_present": [
+        "casualties",
+        "foreign_actors"
+      ],
+      "omissions": [
+        "governance",
+        "humanitarian",
+        "stability"
+      ],
+      "omission_gap": 0.6,
+      "blame_targets": [
+        "foreign"
+      ]
+    }
+  ],
+  "source_angle_cards": [
+    {
+      "class": "international",
+      "sources": [
+        "aljazeera.com"
+      ],
+      "avg_lexical_loadedness": 0.0,
+      "avg_omission_gap": 0.6,
+      "top_topics": [
+        "humanitarian",
+        "foreign_actors"
+      ],
+      "missing_topics": [
+        "casualties",
+        "governance",
+        "stability"
+      ],
+      "summary": "international sources emphasize humanitarian, foreign_actors; moderate omissions with neutral wording."
+    },
+    {
+      "class": "other",
+      "sources": [
+        "en.wikipedia.org",
+        "npr.org",
+        "peoplesworld.org"
+      ],
+      "avg_lexical_loadedness": 0.0052,
+      "avg_omission_gap": 0.8,
+      "top_topics": [
+        "stability",
+        "governance",
+        "casualties",
+        "foreign_actors"
+      ],
+      "missing_topics": [
+        "humanitarian"
+      ],
+      "summary": "other sources emphasize stability, governance, casualties; high omissions with neutral wording."
+    }
+  ],
+  "coverage_matrix_percent": [
+    {
+      "class": "international",
+      "topic_percent": {
+        "casualties": 0.0,
+        "foreign_actors": 100.0,
+        "governance": 0.0,
+        "humanitarian": 100.0,
+        "stability": 0.0
+      }
+    },
+    {
+      "class": "other",
+      "topic_percent": {
+        "casualties": 25.0,
+        "foreign_actors": 25.0,
+        "governance": 25.0,
+        "humanitarian": 0.0,
+        "stability": 25.0
+      }
+    }
+  ],
+  "blame_distribution": {
+    "international": {
+      "government": 1
+    },
+    "other": {
+      "government": 2,
+      "foreign": 1
+    }
+  },
+  "omissions_diff": {
+    "by_class": {
+      "international": [
+        "foreign_actors",
+        "humanitarian"
+      ],
+      "diaspora_blog": []
+    },
+    "merged": [
+      "foreign_actors",
+      "humanitarian"
+    ],
+    "reference_class": "state_aligned"
+  },
+  "entity_stance": {
+    "international": {
+      "government": {
+        "avg_sentiment": 0.0,
+        "mentions": 1
+      },
+      "foreign": {
+        "avg_sentiment": 1.0,
+        "mentions": 1
+      }
+    },
+    "other": {
+      "government": {
+        "avg_sentiment": 0.0,
+        "mentions": 4
+      },
+      "foreign": {
+        "avg_sentiment": 0.0,
+        "mentions": 1
+      }
+    }
+  }
+}

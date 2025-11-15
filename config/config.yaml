@@ -1,0 +1,83 @@
+# News Analysis Configuration
+# Override defaults for Valyu search, tools, and output preferences
+
+# Valyu Search Defaults
+valyu:
+  search_type: "all"              # all | web | proprietary
+  max_results: 5                   # 1-20
+  relevance_threshold: 0.3         # 0.0 - 1.0
+  max_price: 20                    # CPM dollars max
+  response_length: "large"         # short | medium | large | max
+  fast_mode: false                 # True = lower latency, shorter results
+  is_tool_call: true               # Optimize retrieval for agent tool usage
+  category: null                   # Natural language guidance phrase
+  country_code: null               # 2-letter ISO (e.g. US, GB)
+  start_date: null                 # YYYY-MM-DD or relative (-7d, -30d)
+  end_date: null                   # YYYY-MM-DD or relative (today)
+  included_sources: []             # Explicit sources/domains/datasets to include
+  excluded_sources: []             # Explicit sources/domains/datasets to exclude
+  preferred_sources: "bbc.com,reuters.com,aljazeera.com,apnews.com"  # Legacy site filtering
+
+# LLM Configuration
+llm:
+  model: "claude-3-5-sonnet"
+  temperature: 0.1
+  max_tokens: 3072
+  streaming: false  # Enable token streaming (not implemented yet)
+
+# Tool Configuration
+tools:
+  # Enable/disable custom tools
+  bias_scoring: true
+  credibility_check: true
+  conflict_analysis: true
+  corruption_detection: true
+  fact_checking: true  # Requires Google Fact Check API key
+  citation_extraction: true
+  claim_tracking: true
+  nlp_bias: true
+  
+  # External API keys (if not in .env)
+  google_fact_check_api_key: null
+  mediabiasfactcheck_api_key: null
+
+# Analysis Modes
+analysis:
+  default_mode: "agent"  # Options: pipeline, agent, structured, conversation
+  auto_detect_tools: true  # Automatically add relevant tools based on query
+  include_trace: false  # Show agent reasoning by default
+  
+# Output Configuration
+output:
+  format: "text"  # Options: text, json, markdown
+  save_results: false  # Auto-save to data/results/
+  export_path: "data/results/"
+  include_citations: true
+  highlight_bias_indicators: true
+  show_confidence_scores: true
+
+# Multi-language Support
+language:
+  auto_detect: true
+  auto_translate: false  # Translate non-English to English
+  translation_service: "google"  # Options: google, libre, deepl
+
+# Retry & Error Handling
+retry:
+  max_retries: 3
+  base_delay: 1.0
+  max_delay: 60.0
+  backoff_factor: 2.0
+  rate_limit_delay: 10.0
+
+# Caching (Good to Have - not implemented)
+cache:
+  enabled: false
+  ttl_hours: 24
+  cache_path: "data/cache/"
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "logs/news_analysis.log"
+  console: true
