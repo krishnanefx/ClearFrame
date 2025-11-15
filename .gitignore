@@ -4,21 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
 # Virtual Environment
 .venv/
@@ -28,32 +13,23 @@ env/
 
 # Environment variables
 .env
-.env.local
+config/.env
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Streamlit
+.streamlit/
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# LangChain/LangSmith
-.langchain/
-
-# Project-specific
-data/cache_store/
-data/mock_dynamo/
-docs/external_tutorials/
-*.ipynb_checkpoints/
+# Data
+data/
+cache/
+*.db
+*.sqlite
