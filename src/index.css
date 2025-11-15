@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* ClearFrame Design System - Warm, colorful, trustworthy */
+    --background: 40 40% 94%;
+    --foreground: 25 30% 20%;
+
+    --card: 40 50% 98%;
+    --card-foreground: 25 30% 20%;
+
+    --popover: 40 50% 98%;
+    --popover-foreground: 25 30% 20%;
+
+    --primary: 200 75% 55%;
+    --primary-foreground: 40 50% 98%;
+
+    --secondary: 35 45% 88%;
+    --secondary-foreground: 25 30% 20%;
+
+    --muted: 40 35% 90%;
+    --muted-foreground: 25 15% 45%;
+
+    --accent: 20 85% 60%;
+    --accent-foreground: 40 50% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 50% 98%;
+
+    --border: 35 30% 85%;
+    --input: 35 30% 85%;
+    --input-bg: 40 45% 97%;
+    --ring: 200 75% 55%;
+
+    --radius: 1.125rem;
+
+    /* ClearFrame specific tokens */
+    --prompt-bg: 40 50% 98%;
+    --prompt-border: 35 30% 85%;
+    --prompt-focus-glow: 200 75% 55% / 0.15;
+    --divider: 35 35% 88%;
+    --logo-frame: 200 75% 55%;
+    --logo-accent: 20 85% 60%;
+    --logo-inner: 25 30% 35%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 25 20% 12%;
+    --foreground: 40 30% 90%;
+
+    --card: 25 18% 15%;
+    --card-foreground: 40 30% 90%;
+
+    --popover: 25 18% 15%;
+    --popover-foreground: 40 30% 90%;
+
+    --primary: 200 75% 55%;
+    --primary-foreground: 25 18% 15%;
+
+    --secondary: 25 15% 22%;
+    --secondary-foreground: 40 30% 90%;
+
+    --muted: 25 12% 20%;
+    --muted-foreground: 40 15% 60%;
+
+    --accent: 20 85% 60%;
+    --accent-foreground: 25 18% 15%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 40 30% 90%;
+
+    --border: 25 15% 25%;
+    --input: 25 15% 25%;
+    --input-bg: 25 18% 15%;
+    --ring: 200 75% 55%;
+
+    --prompt-bg: 25 18% 15%;
+    --prompt-border: 25 15% 25%;
+    --prompt-focus-glow: 200 75% 55% / 0.2;
+    --divider: 25 15% 25%;
+    --logo-frame: 200 75% 55%;
+    --logo-accent: 20 85% 60%;
+    --logo-inner: 40 20% 70%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
