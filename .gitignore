@@ -51,3 +51,9 @@ htmlcov/
 
 # LangChain/LangSmith
 .langchain/
+
+# Project-specific
+data/cache_store/
+data/mock_dynamo/
+docs/external_tutorials/
+*.ipynb_checkpoints/

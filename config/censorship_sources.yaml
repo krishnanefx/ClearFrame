@@ -1,0 +1,26 @@
+sources:
+  - name: "BBC News"
+    url: "http://feeds.bbci.co.uk/news/rss.xml"
+    region: "UK"
+    state_aligned: false
+  - name: "The Guardian"
+    url: "https://www.theguardian.com/world/rss"
+    region: "UK"
+    state_aligned: false
+  - name: "Associated Press"
+    url: "http://hosted.ap.org/lineups/TOPHEADS-rss_2.0.xml?SITE=AP&SECTION=HOME"
+    region: "USA"
+    state_aligned: false
+  - name: "Xinhua News Agency"
+    url: "http://www.xinhuanet.com/english/rss/worldrss.xml"
+    region: "China"
+    state_aligned: true
+  - name: "China Daily"
+    url: "http://www.chinadaily.com.cn/rss/world_rss.xml"
+    region: "China"
+    state_aligned: true
+  - name: "RT (Russia Today)"
+    url: "https://www.rt.com/rss/"
+    region: "Russia"
+    state_aligned: true
+

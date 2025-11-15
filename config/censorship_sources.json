@@ -1,0 +1,46 @@
+{
+  "pipeline": "censorship_cross_checker",
+  "regions": {
+    "us": "North America focus",
+    "eu": "European Union focus",
+    "apac": "Asia-Pacific focus",
+    "mena": "Middle East and North Africa focus"
+  },
+  "sources": [
+    {
+      "id": "liberty_watch",
+      "name": "Liberty Watch",
+      "url": "https://libertywatch.example.com/rss",
+      "region_tags": ["us", "eu"],
+      "state_aligned": false,
+      "topics": ["civil liberties", "regulation"]
+    },
+    {
+      "id": "aurora_daily",
+      "name": "Aurora Daily",
+      "url": "https://auroradaily.example.com/feed",
+      "region_tags": ["apac"],
+      "state_aligned": true,
+      "topics": ["science", "economy"]
+    },
+    {
+      "id": "sahara_wire",
+      "name": "Sahara Wire",
+      "url": "https://saharawire.example.com/rss",
+      "region_tags": ["mena", "eu"],
+      "state_aligned": false,
+      "topics": ["energy", "geopolitics"]
+    }
+  ],
+  "valyu": {
+    "credentials": {
+      "api_key_env": "VALYU_API_KEY",
+      "org_id_env": "VALYU_ORG_ID"
+    },
+    "search_defaults": {
+      "freshness_days": 5,
+      "language": "en",
+      "region_focus": ["us", "eu", "apac"]
+    }
+  }
+}
