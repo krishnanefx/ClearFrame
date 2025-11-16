@@ -8,11 +8,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy application code and assets
+COPY backend ./backend
+COPY src ./src
+COPY config ./config
+COPY data ./data
+COPY tutorials ./tutorials
 
 # Expose port
 EXPOSE 5001
@@ -22,4 +26,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5001/health || exit 1
 
 # Run the application
-CMD ["python3", "api_server.py"]
+CMD ["python3", "-m", "backend.api_server"]

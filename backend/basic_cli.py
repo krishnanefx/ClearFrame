@@ -11,19 +11,19 @@ Advanced features from LangChain tutorials:
 
 Usage examples:
   # Basic pipeline
-  python basic_cli.py --query "AI regulation" --mode pipeline
+  python -m backend.basic_cli --query "AI regulation" --mode pipeline
   
   # Agent with custom tools
-  python basic_cli.py --query "climate change" --mode agent --tools bias,credibility --trace
+  python -m backend.basic_cli --query "climate change" --mode agent --tools bias,credibility --trace
   
   # Structured JSON output
-  python basic_cli.py --query "quantum computing" --mode structured --output-json
+  python -m backend.basic_cli --query "quantum computing" --mode structured --output-json
   
   # Multi-turn conversation
-  python basic_cli.py --query "AI ethics" --mode conversation
+  python -m backend.basic_cli --query "AI ethics" --mode conversation
   
   # With LangSmith tracing
-  LANGCHAIN_TRACING_V2=true python basic_cli.py --query "tech news" --mode agent
+  LANGCHAIN_TRACING_V2=true python -m backend.basic_cli --query "tech news" --mode agent
 """
 
 import os
@@ -47,6 +47,7 @@ load_dotenv(PROJECT_ROOT / "config" / ".env", override=False)
 
 # Ensure repo root is on the path for src imports when running from backend/
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(BACKEND_DIR))
 
 # Imports
 # Robust import for HolisticAI chat model helper
@@ -58,14 +59,15 @@ except Exception:
     except Exception:
         # Load directly from file as last resort
         import importlib.util
-        _root = os.path.dirname(os.path.abspath(__file__))
         _candidates = [
-            os.path.join(_root, "tutorials", "holistic_ai_bedrock.py"),
-            os.path.join(_root, "examples", "holistic_ai_bedrock.py"),
+            BACKEND_DIR / "tutorials" / "holistic_ai_bedrock.py",
+            BACKEND_DIR / "examples" / "holistic_ai_bedrock.py",
+            PROJECT_ROOT / "tutorials" / "holistic_ai_bedrock.py",
+            PROJECT_ROOT / "examples" / "holistic_ai_bedrock.py",
         ]
         _loaded = False
         for _path in _candidates:
-            if os.path.exists(_path):
+            if _path.exists():
                 spec = importlib.util.spec_from_file_location("holistic_ai_bedrock", _path)
                 if spec and spec.loader:
                     mod = importlib.util.module_from_spec(spec)

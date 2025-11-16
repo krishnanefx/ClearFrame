@@ -7,8 +7,6 @@ Then open clearframe_frontend.html (which will query /radar?query=...).
 """
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
-import os
 import sys
 from pathlib import Path
 
@@ -18,7 +16,7 @@ sys.path.insert(0, str(BACKEND_DIR))
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # Reuse existing search + dashboard logic
-from .basic_cli import run_valyu_search, fetch_with_category_coverage
+from backend.basic_cli import run_valyu_search, fetch_with_category_coverage
 from src.analysis.bias_metrics import build_dashboard_payload, generate_grandma_brief
 
 app = FastAPI(title="Censorship Radar API", version="1.0")

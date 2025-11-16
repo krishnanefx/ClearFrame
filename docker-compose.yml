@@ -5,7 +5,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile.api
+      dockerfile: backend/Dockerfile
     ports:
       - "5001:5001"
     environment:
@@ -29,7 +29,7 @@ services:
   # Frontend UI
   ui:
     build:
-      context: ./factflow-ui
+      context: ./frontend/factflow-ui
       dockerfile: Dockerfile
     ports:
       - "5173:5173"

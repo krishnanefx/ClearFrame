@@ -8,8 +8,11 @@ bias across the political spectrum.
 """
 
 import json
+import os
 import sys
 from pathlib import Path
+
+import pytest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -72,8 +75,16 @@ RADICAL_TEST_TOPICS = [
 ]
 
 
-def test_single_topic(topic: dict, verbose: bool = True):
-    """Test bias analysis on a single controversial topic."""
+RUN_MANUAL_BIAS_TESTS = os.getenv("RUN_BIAS_MANUAL_TESTS") == "1"
+pytestmark = pytest.mark.skipif(
+    not RUN_MANUAL_BIAS_TESTS,
+    reason="Manual bias analysis test requires API access. "
+           "Set RUN_BIAS_MANUAL_TESTS=1 to run.",
+)
+
+
+def run_single_topic(topic: dict, verbose: bool = True):
+    """Run bias analysis on a single controversial topic."""
     print(f"\n{'='*80}")
     print(f"Testing: {topic['query']}")
     print(f"Description: {topic['description']}")
@@ -210,7 +221,7 @@ def test_all_topics():
     
     for i, topic in enumerate(RADICAL_TEST_TOPICS, 1):
         print(f"\n\n[{i}/{len(RADICAL_TEST_TOPICS)}] ", end='')
-        result = test_single_topic(topic, verbose=True)
+        result = run_single_topic(topic, verbose=True)
         
         if result:
             results[topic['query']] = result
@@ -255,6 +266,13 @@ def test_all_topics():
     print("\n" + "="*80 + "\n")
     
     return results
+
+
+@pytest.mark.parametrize("topic", RADICAL_TEST_TOPICS)
+def test_single_topic(topic):
+    """Pytest wrapper to enable single-topic run when manual tests are enabled."""
+    result = run_single_topic(topic, verbose=False)
+    assert result is not None, "Bias analysis returned no results"
 
 
 if __name__ == "__main__":

@@ -54,7 +54,7 @@ The API server will start on `http://localhost:5001`
 
 ```bash
 # Navigate to frontend directory
-cd factflow-ui
+cd frontend/factflow-ui
 
 # Install dependencies (using npm or bun)
 npm install
@@ -93,7 +93,7 @@ FLASK_DEBUG=false
 FAST_LLM_MODEL=us.anthropic.claude-3-5-haiku-20241022-v1:0
 ```
 
-### Frontend (.env in factflow-ui directory)
+### Frontend (.env in frontend/factflow-ui directory)
 
 ```bash
 # API endpoint
@@ -159,7 +159,7 @@ python3 api_server.py
 
 Terminal 2 - Frontend:
 ```bash
-cd factflow-ui
+cd frontend/factflow-ui
 npm run dev
 ```
 
@@ -167,11 +167,11 @@ npm run dev
 
 Frontend:
 ```bash
-cd factflow-ui
+cd frontend/factflow-ui
 npm run build
 ```
 
-The built files will be in `factflow-ui/dist/`
+The built files will be in `frontend/factflow-ui/dist/`
 
 ## Troubleshooting
 
@@ -192,7 +192,7 @@ pip install -r requirements.txt
 
 Frontend:
 ```bash
-cd factflow-ui
+cd frontend/factflow-ui
 npm install
 ```
 
@@ -229,7 +229,7 @@ npm install
 │   ├── analysis/         # Bias detection logic
 │   ├── observability/    # Monitoring tools
 │   └── utils/            # Utilities
-└── factflow-ui/          # React frontend
+└── frontend/factflow-ui/          # React frontend
     ├── src/
     │   ├── components/   # UI components
     │   ├── pages/        # Page components

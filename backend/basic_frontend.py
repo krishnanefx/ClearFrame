@@ -12,7 +12,7 @@ from typing import List, Optional, Tuple
 
 import streamlit as st
 
-from .basic_cli import (
+from backend.basic_cli import (
     analyze_agent,
     analyze_debate,
     analyze_pipeline,

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Successfully integrated `basic_cli.py` backend with `factflow-ui` React frontend through a Flask API server.
+Successfully integrated `basic_cli.py` backend with `frontend/factflow-ui` React frontend through a Flask API server.
 
 ## What Was Created
 
@@ -14,17 +14,17 @@ Successfully integrated `basic_cli.py` backend with `factflow-ui` React frontend
   - `POST /api/search` - Search for articles
   - `GET /health` - Health check
 
-### 2. **Updated Frontend** (`factflow-ui/src/pages/Index.tsx`)
+### 2. **Updated Frontend** (`frontend/factflow-ui/src/pages/Index.tsx`)
 - Modified to call backend API instead of static JSON
 - Dynamic analysis based on user input
 - Real-time results from backend analysis
 
 ### 3. **Configuration Files**
-- `factflow-ui/.env.example` - Frontend environment template
+- `frontend/factflow-ui/.env.example` - Frontend environment template
 - `FULLSTACK_SETUP.md` - Comprehensive setup documentation
-- `start.sh` - Convenience script to run both services
+- `scripts/start.sh` - Convenience script to run both services
 - `docker-compose.yml` - Docker orchestration
-- `Dockerfile.api` & `factflow-ui/Dockerfile` - Container definitions
+- `backend/Dockerfile` & `frontend/factflow-ui/Dockerfile` - Container definitions
 
 ### 4. **Test Script** (`test_api.py`)
 - Automated API testing
@@ -39,10 +39,10 @@ Successfully integrated `basic_cli.py` backend with `factflow-ui` React frontend
 pip install -r requirements.txt
 
 # Install frontend dependencies
-cd factflow-ui && npm install && cd ..
+cd frontend/factflow-ui && npm install && cd ..
 
 # Start both services
-./start.sh
+./scripts/start.sh
 ```
 
 ### Option 2: Manual Start
@@ -54,7 +54,7 @@ python3 api_server.py
 
 Terminal 2 - Frontend:
 ```bash
-cd factflow-ui
+cd frontend/factflow-ui
 npm run dev
 ```
 
@@ -117,7 +117,7 @@ HOLISTIC_AI_API_TOKEN=your_token
 HOLISTIC_AI_TEAM_ID=your_team_id
 ```
 
-Frontend (`factflow-ui/.env`):
+Frontend (`frontend/factflow-ui/.env`):
 ```
 VITE_API_URL=http://localhost:5001
 ```
@@ -159,18 +159,18 @@ VITE_API_URL=http://localhost:5001
 ## Files Modified
 
 - `requirements.txt` - Added Flask dependencies
-- `factflow-ui/src/pages/Index.tsx` - Updated to call API
+- `frontend/factflow-ui/src/pages/Index.tsx` - Updated to call API
 
 ## Files Created
 
 - `api_server.py` - Flask API server
 - `FULLSTACK_SETUP.md` - Setup documentation
-- `start.sh` - Startup script
+- `scripts/start.sh` - Startup script
 - `test_api.py` - API tests
 - `docker-compose.yml` - Docker orchestration
-- `Dockerfile.api` - Backend container
-- `factflow-ui/Dockerfile` - Frontend container
-- `factflow-ui/.env.example` - Frontend env template
+- `backend/Dockerfile` - Backend container
+- `frontend/factflow-ui/Dockerfile` - Frontend container
+- `frontend/factflow-ui/.env.example` - Frontend env template
 
 ## Success Criteria
 

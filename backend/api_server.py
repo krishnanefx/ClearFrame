@@ -6,10 +6,9 @@ Connects basic_cli.py backend with factflow-ui frontend
 
 import os
 import sys
-import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -26,7 +25,7 @@ sys.path.insert(0, str(BACKEND_DIR))
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # Import from backend engine
-from .basic_cli import (
+from backend.basic_cli import (
     run_valyu_search,
     analyze_articles_bias,
     get_chat_model,
@@ -34,6 +33,18 @@ from .basic_cli import (
     get_metrics,
     start_emissions_tracker,
     stop_emissions_tracker,
+    analyze_bias_advanced,
+    compare_article_narratives,
+    detect_framing_techniques,
+    analyze_power_dynamics,
+    cluster_narratives,
+    evidence_strength,
+    detect_propaganda,
+)
+from src.analysis.bias_metrics import (
+    generate_grandma_brief,
+    build_dashboard_payload,
+    compute_censorship_radar,
 )
 from src.utils.config_loader import Config
 
@@ -125,20 +136,79 @@ def analyze_claim():
         # Optionally enhance with advanced analysis
         if enable_advanced:
             try:
-                from .basic_cli import analyze_bias_advanced
-                for i, article in enumerate(covered_articles[:3]):
-                    advanced = analyze_bias_advanced(
-                        article.get('body', article.get('snippet', '')),
-                        llm
-                    )
+                logger.info("Running advanced LLM analysis on top articles...")
+                for i, article in enumerate(covered_articles[:5]):
+                    advanced = analyze_bias_advanced(article, llm)
+                    framing = detect_framing_techniques(article, llm)
+                    power = analyze_power_dynamics(article)
+                    
                     if 'articles' in bias_results and i < len(bias_results['articles']):
-                        bias_results['articles'][i]['advanced_analysis'] = advanced
+                        bias_results['articles'][i]['advanced_analysis'] = {
+                            **advanced,
+                            'framing_techniques': framing,
+                            'power_dynamics': power
+                        }
+                
+                # Add narrative comparison
+                narrative_comparison = compare_article_narratives(covered_articles[:10], llm)
+                bias_results['narrative_comparison'] = narrative_comparison
+                
             except Exception as e:
                 logger.warning(f"Advanced analysis failed: {e}")
+        
+        # Generate narrative clusters
+        try:
+            titles_and_descriptions = [
+                {"title": a.get("title", ""), "description": a.get("description", "")}
+                for a in covered_articles
+            ]
+            narrative_clusters = cluster_narratives.invoke({
+                "titles_and_descriptions": titles_and_descriptions,
+                "num_clusters": 3
+            })
+            bias_results['narrative_clusters'] = narrative_clusters
+        except Exception as e:
+            logger.warning(f"Narrative clustering failed: {e}")
+        
+        # Add propaganda detection
+        propaganda_summary = []
+        for article in covered_articles[:10]:
+            body_text = article.get('body', article.get('description', ''))
+            if body_text:
+                try:
+                    propaganda_result = detect_propaganda.invoke({"text": body_text})
+                    if propaganda_result.get('count', 0) > 0:
+                        propaganda_summary.append({
+                            'title': article.get('title', 'Untitled'),
+                            'source': article.get('source', 'Unknown'),
+                            'techniques': propaganda_result
+                        })
+                except Exception:
+                    pass
+        
+        if propaganda_summary:
+            bias_results['propaganda_summary'] = propaganda_summary
+        
+        # Generate dashboard payload (includes censorship radar, framing, etc.)
+        try:
+            dashboard_payload = build_dashboard_payload(covered_articles, query)
+            bias_results['dashboard_metrics'] = {
+                'scale_of_censorship': dashboard_payload.get('scale_of_censorship', 0),
+                'severity': dashboard_payload.get('severity', 'low'),
+                'union_topics': dashboard_payload.get('union_topics', []),
+                'source_angle_cards': dashboard_payload.get('source_angle_cards', []),
+                'coverage_matrix_percent': dashboard_payload.get('coverage_matrix_percent', []),
+                'omissions_diff': dashboard_payload.get('omissions_diff', {}),
+            }
+        except Exception as e:
+            logger.warning(f"Dashboard payload generation failed: {e}")
         
         # Stop emissions tracking
         stop_emissions_tracker()
         metrics = get_metrics()
+        
+        # Generate grandma brief (300-500 word summary)
+        grandma_brief = generate_grandma_brief(covered_articles, query)
         
         # Build response
         result = {
@@ -146,6 +216,7 @@ def analyze_claim():
             "search_type": search_type,
             "article_count": len(covered_articles),
             "bias_analysis": bias_results,
+            "grandma_brief": grandma_brief,
             "ingestion_summary": ingestion_meta,
             "observability": {
                 "emissions_kg": metrics.get("emissions_kg"),

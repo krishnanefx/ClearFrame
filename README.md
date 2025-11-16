@@ -1,101 +1,65 @@
 # FactFlow: News Bias & Coverage Analyzer
 
-Full‑stack application (Flask API + Vite/React frontend) for multi‑source news retrieval, bias & coverage analysis, and observability metrics. Built for The Great Agent Hack 2025.
+Full‑stack app (Flask API + Vite/React frontend) for multi‑source news retrieval, bias coverage analysis, and observability. Built for The Great Agent Hack 2025.
 
-## Features
+## What’s Inside
+- Backend (`backend/`): Flask API, deterministic bias engine, CLI, FastAPI radar server.
+- Frontend (`frontend/factflow-ui/`): Vite + React + Tailwind UI.
+- Core logic (`src/`): Bias metrics, observability, utilities.
+- Docs (`docs/`): Deployment, integration notes, dashboards, assets.
 
-- 🔍 **Real-time News Search** - Search news from multiple sources using Valyu API
-- 🤖 **AI-Powered Analysis** - Analyze articles using HolisticAI Claude 3.5
-- 📊 **Bias Detection** - Calculate sentiment and detect potential bias
-- 💡 **Smart Recommendations** - Get suggestions for balanced information
-- 📰 **Multi-Source Support** - Compare coverage across different news sources
-
-git clone https://github.com/krishnanefx/TheGreatAgentHack.git
-## Quick Start (Full Stack)
-
-### 1. Clone & Environment
-
+## Quick Start
 ```bash
 git clone https://github.com/krishnanefx/TheGreatAgentHack.git
 cd TheGreatAgentHack
-python -m venv .venv
-source .venv/bin/activate  # macOS/Linux
-pip install -r requirements.txt
+python -m venv .venv && source .venv/bin/activate   # macOS/Linux
+pip install -r backend/requirements.txt
 ```
 
-### 2. Configure Credentials
-
-Create `.env` in the project root (or edit existing):
-
+Create `.env` in repo root:
 ```bash
 VALYU_API_KEY=your_valyu_api_key
 HOLISTIC_AI_TEAM_ID=your_team_id
 HOLISTIC_AI_API_TOKEN=your_api_token
-# Optional fast LLM override
+# Optional fast LLM override:
 # FAST_LLM_MODEL=us.anthropic.claude-3-5-haiku-20241022-v1:0
 ```
 
-Frontend API target is auto‑synced by `start.sh` via `factflow-ui/.env (VITE_API_URL=...)`.
-
-### 3. Start Both Services
-
+Start everything (auto-writes `frontend/factflow-ui/.env`):
 ```bash
-chmod +x start.sh
-./start.sh                 # Uses API_PORT=5001 FRONTEND_PORT=5173 by default
-
-# Override ports (optional):
-API_PORT=5010 FRONTEND_PORT=5200 ./start.sh
+chmod +x scripts/start.sh
+./scripts/start.sh                 # API_PORT=5001, FRONTEND_PORT=5173
+# Override: API_PORT=5010 FRONTEND_PORT=5200 ./scripts/start.sh
 ```
+Access: API `http://localhost:<API_PORT>/health`, UI `http://localhost:<FRONTEND_PORT>`.
 
-Access:
-- API: `http://localhost:<API_PORT>/health`
-- Frontend UI: `http://localhost:<FRONTEND_PORT>`
-
-### 4. Direct Backend Only (Optional)
-
+Run backend only:
 ```bash
-API_PORT=5001 python api_server.py
+API_PORT=5001 python -m backend.api_server
 ```
 
-### 5. CLI Mode (Deterministic JSON)
-
+CLI example (deterministic JSON):
 ```bash
-python basic_cli.py --query "sudan war" --json-only --output-file result.json
-cat result.json | jq '.bias_analysis.aggregate_stats.average_scores'
+python -m backend.basic_cli --query "sudan war" --json-only --output-file result.json
 ```
 
-## Frontend Usage
-
-1. Enter a topic (e.g., “sudan war”, “AI regulation”).
-2. Click Analyze – frontend calls `/api/analyze` (Flask) with deterministic coverage + bias pipeline.
-3. View: status assessment, confidence, explanation, source list & bias metrics (omission, sentiment delta, loaded language, censorship radar, source diversity).
-4. Toggle Grandma Mode for simplified accessibility styling.
-
-## Source Categories
-
-- **All Sources** - Search across all available sources
-- **Independent** - BBC, The Guardian, Reuters, Associated Press
-- **Mainstream US** - CNN, Fox News, New York Times
-- **State-Aligned** - China Daily, RT, Xinhua
-- **Custom** - Add your own sources
-
-## Project Structure (Key Paths)
-
+## Repository Map
 ```
-api_server.py                # Flask API (health, /api/analyze, /api/search)
-basic_cli.py                 # Deterministic CLI pipeline & benchmarks
-start.sh                     # Unified startup script (API + Vite frontend)
-factflow-ui/                 # Vite + React + Tailwind frontend
-	src/pages/Index.tsx        # Entry page calling /api/analyze
-	src/components/            # UI + metrics visualization components
-src/analysis/bias_metrics.py # Deterministic per-article bias engine
-src/observability/           # Emissions + latency instrumentation
-config/config.yaml           # Override defaults
-tests/                       # Deterministic + coverage unit tests
+backend/                  # Python backend package & CLIs
+  api_server.py           # Flask API (health, /api/analyze, /api/search)
+  basic_cli.py            # Deterministic pipeline & benchmarks
+  basic_frontend.py       # Streamlit playground
+  radar_server.py         # FastAPI radar service
+frontend/factflow-ui/     # Vite + React + Tailwind frontend
+src/analysis/             # Bias metrics engine
+src/observability/        # Emissions + latency instrumentation
+config/config.yaml        # Default configuration
+tests/                    # Deterministic + coverage unit tests
+docs/                     # Deployment, integration, dashboards, assets
+scripts/start.sh          # Unified startup script
 ```
 
 ## Requirements
-
 - Python 3.9+
 - Flask + flask-cors
 - LangChain / langchain-valyu / langgraph
@@ -103,49 +67,34 @@ tests/                       # Deterministic + coverage unit tests
 - Valyu API key
 - Node 18+ (frontend)
 
-## Pricing
-
-Valyu Search API uses tiered pricing based on data source type:
-- **Open Databases**: $0.50 per 1k retrievals (arXiv, Wikipedia, PubMed)
-- **Web Search**: $1.50 per 1k retrievals (news, blogs, general web)
-- **Financial & Market Data**: $8.00 per 1k retrievals (stocks, crypto, markets)
-- **Proprietary Databases**: $30-50 per 1k retrievals (journals, premium content)
-
-See [PRICING.md](PRICING.md) for detailed pricing information and cost management tips.
+## Frontend Usage
+1) Enter a topic (e.g., “sudan war”, “AI regulation”).  
+2) Click Analyze → calls `/api/analyze`.  
+3) View status, confidence, sources, bias metrics (omission, sentiment delta, loaded language, censorship radar, source diversity).  
+4) Toggle Grandma Mode for simplified styling.
 
 ## Troubleshooting
-
 | Issue | Fix |
 |-------|-----|
-| `ModuleNotFoundError: flask` | Activate venv; run `pip install -r requirements.txt` |
-| 404 on `/api/analyze` | Ensure `api_server.py` running & `VITE_API_URL` matches API_PORT |
-| Port already in use | Change `API_PORT` env or free process (`lsof -i :5001`) |
-| Slow responses | Enable fast mode in CLI (`--fast-mode`) or lower `max_results` |
-| Missing advanced analysis | Set `ENABLE_ADVANCED_ANALYSIS=true` in environment |
-| Determinism tests failing | Avoid modifying core tokenization or random functions |
+| `ModuleNotFoundError: flask` | Activate venv; run `pip install -r backend/requirements.txt` |
+| 404 on `/api/analyze` | Ensure `backend.api_server` is running & `VITE_API_URL` matches API_PORT |
+| Port already in use | Change `API_PORT` or free the port (`lsof -i :5001`) |
+| Slow responses | Use CLI `--fast-mode` or lower `max_results` |
+| Missing advanced analysis | Set `ENABLE_ADVANCED_ANALYSIS=true` |
+| Determinism tests failing | Avoid changing tokenization/random functions |
 
-### Regenerating Frontend Env
-`VITE_API_URL` is auto‑written by `start.sh`. If manually changing ports:
+Regenerate frontend env manually (if needed):
 ```bash
-echo "VITE_API_URL=http://localhost:5010" > factflow-ui/.env
+echo "VITE_API_URL=http://localhost:5010" > frontend/factflow-ui/.env
 ```
 
-### Running Tests
+Run tests:
 ```bash
 source .venv/bin/activate
 pytest tests/test_bias_metrics_dashboard.py tests/test_consistency.py -q
 ```
 
-## Contributing
-
-See [contributing.md](contributing.md) for guidelines.
+See [docs/contributing.md](docs/contributing.md) for contributions and [PRICING.md](PRICING.md) for Valyu pricing.
 
 ---
-
-**Built for The Great Agent Hack 2025**  
-*Powered by Valyu Search + HolisticAI*
-
----
-Maintainers: @krishnanefx
-
-Production note: Use a WSGI server (gunicorn/uwsgi) and proper caching layer for scaling beyond hackathon scope.
+Built for The Great Agent Hack 2025 • Powered by Valyu Search + HolisticAI
