@@ -1,0 +1,789 @@
+{
+  "query": "sudan war",
+  "clusters": [
+    {
+      "cluster_id": 0,
+      "size": 1,
+      "representative_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+      "shared_terms": [
+        "sudan",
+        "civil",
+        "armed",
+        "between",
+        "control",
+        "created"
+      ],
+      "per_source_metrics": {
+        "theguardian.com": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "theguardian.com",
+          "summary": "theguardian.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+          "key_emphasis": "foreign_actors, humanitarian"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "As criticism grows, is UAE ready to walk away from Sudan’s RSF militia",
+            "source_url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary- general-says?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "The two-year civil war between the Sudanese armed forces (SAF) and the RSF has created what the UN has described as one of the worst humanitarian crises of the 21st",
+            "source_url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary- general-says?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "theguardian.com": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+            "source": "web",
+            "url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general- says?utm_source=valyu.ai&utm_medium=referral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "theguardian.com",
+            "summary": "theguardian.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "international",
+              "topic_percent": {
+                "foreign_actors": 100.0,
+                "humanitarian": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "international": {}
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 1,
+      "size": 1,
+      "representative_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+      "shared_terms": [
+        "about",
+        "began",
+        "civil",
+        "conflict",
+        "forced",
+        "green"
+      ],
+      "per_source_metrics": {
+        "bbc.com": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "bbc.com",
+          "summary": "bbc.com emphasizes casualties, foreign_actors; broad coverage with neutral language.",
+          "key_emphasis": "casualties, foreign_actors"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "The stain on the record of the",
+            "source_url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "Since the civil war began over two years ago, more than 150,000 people have been killed and about 12 m illion have been forced from their homes",
+            "source_url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "bbc.com": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Sudan conflict: Mass killings investigation gets green light from UN",
+            "source": "web",
+            "url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "bbc.com",
+            "summary": "bbc.com emphasizes casualties, foreign_actors; broad coverage with neutral language.",
+            "key_emphasis": "casualties, foreign_actors"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "international",
+              "topic_percent": {
+                "casualties": 100.0,
+                "foreign_actors": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "international": {}
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 2,
+      "size": 1,
+      "representative_title": "China’s Arm-Length Approach to Sudan Civil War",
+      "shared_terms": [
+        "approach",
+        "april",
+        "broke",
+        "called",
+        "ceasefire",
+        "china"
+      ],
+      "per_source_metrics": {
+        "jessemarks.substack.com": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "jessemarks.substack.com",
+          "summary": "jessemarks.substack.com emphasizes diplomacy, economic, foreign_actors; broad coverage with neutral langua ge.",
+          "key_emphasis": "diplomacy, economic, foreign_actors"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "When the war broke out in April 2023, the Chinese foreign ministry publicly called for an immediate ce asefire and a transition process, warning that outside interference had deepened the turmoil and put regional investment, especially its",
+            "source_url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium= referral",
+            "source_title": "China’s Arm-Length Approach to Sudan Civil War",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "jessemarks.substack.com": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "China’s Arm-Length Approach to Sudan Civil War",
+            "source": "web",
+            "url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium=referra l",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "jessemarks.substack.com",
+            "summary": "jessemarks.substack.com emphasizes diplomacy, economic, foreign_actors; broad coverage with neutral lang uage.",
+            "key_emphasis": "diplomacy, economic, foreign_actors"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "diaspora_blog",
+              "topic_percent": {
+                "diplomacy": 100.0,
+                "economic": 100.0,
+                "foreign_actors": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "diaspora_blog": {
+              "foreign": 1
+            }
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 3,
+      "size": 1,
+      "representative_title": "The truth about the civil war in Sudan – People's World",
+      "shared_terms": [
+        "forces",
+        "sudanese",
+        "abdul",
+        "about",
+        "april",
+        "armed"
+      ],
+      "per_source_metrics": {
+        "peoplesworld.org": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "peoplesworld.org",
+          "summary": "peoplesworld.org emphasizes general context; broad coverage with neutral language.",
+          "key_emphasis": "general context"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "The current Sudanese war began on April 15, 2023",
+            "source_url": "https://peoplesworld.org/article/the-truth-about-the-civil-war-in-sudan/?utm_source=valyu.ai&utm_medi um=referral",
+            "source_title": "The truth about the civil war in Sudan – People's World",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "The forces of the RSF (Rapid Support Forces), led by Mohamed Hamdan Dagalo (also known as Hamedti), sp lit from the Sudanese Armed Forces, led by Abdul Fattah al-Burhan",
+            "source_url": "https://peoplesworld.org/article/the-truth-about-the-civil-war-in-sudan/?utm_source=valyu.ai&utm_medi um=referral",
+            "source_title": "The truth about the civil war in Sudan – People's World",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "peoplesworld.org": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "The truth about the civil war in Sudan – People's World",
+            "source": "web",
+            "url": "https://peoplesworld.org/article/the-truth-about-the-civil-war-in-sudan/?utm_source=valyu.ai&utm_medium=refe rral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "peoplesworld.org",
+            "summary": "peoplesworld.org emphasizes general context; broad coverage with neutral language.",
+            "key_emphasis": "general context"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "other",
+              "topic_percent": {}
+            }
+          ],
+          "blame_distribution": {
+            "other": {}
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 4,
+      "size": 1,
+      "representative_title": "Sudanese civil war (2023–present) - Wikipedia",
+      "shared_terms": [
+        "civil",
+        "attempts",
+        "chronic",
+        "darfur",
+        "devastating",
+        "endured"
+      ],
+      "per_source_metrics": {
+        "en.wikipedia.org": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0208,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "en.wikipedia.org",
+          "summary": "en.wikipedia.org emphasizes stability; broad coverage with some loaded wording.",
+          "key_emphasis": "stability"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "Since gaining independence in 1956, Sudan has endured chronic instability marked by 20 coup attempts,  prolonged military rule, two devastating civil wars, and the Darfur genocide",
+            "source_url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=r eferral",
+            "source_title": "Sudanese civil war (2023–present) - Wikipedia",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "The war erupted amid tensions over the integration of the RSF into the army following the 2021 coup, s tarting with",
+            "source_url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=r eferral",
+            "source_title": "Sudanese civil war (2023–present) - Wikipedia",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "en.wikipedia.org": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Sudanese civil war (2023–present) - Wikipedia",
+            "source": "web",
+            "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=referral ",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "en.wikipedia.org",
+            "summary": "en.wikipedia.org emphasizes stability; broad coverage with some loaded wording.",
+            "key_emphasis": "stability"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "other",
+              "topic_percent": {
+                "stability": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "other": {
+              "government": 1
+            }
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 5,
+      "size": 1,
+      "representative_title": "Second Sudanese Civil War - Wikipedia",
+      "shared_terms": [
+        "against",
+        "allegations",
+        "along",
+        "based",
+        "between",
+        "central"
+      ],
+      "per_source_metrics": {
+        "en.wikipedia.org": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "en.wikipedia.org",
+          "summary": "en.wikipedia.org emphasizes governance; broad coverage with neutral language.",
+          "key_emphasis": "governance"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "Wars in Sudan are often characterized as fights between the central government expanding and dominatin g peoples of the periphery, raising allegations of marginalization",
+            "source_url": "https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Second Sudanese Civil War - Wikipedia",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "Kingdoms and great powers based along the Nile River have fought against",
+            "source_url": "https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Second Sudanese Civil War - Wikipedia",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "en.wikipedia.org": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Second Sudanese Civil War - Wikipedia",
+            "source": "web",
+            "url": "https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "en.wikipedia.org",
+            "summary": "en.wikipedia.org emphasizes governance; broad coverage with neutral language.",
+            "key_emphasis": "governance"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "other",
+              "topic_percent": {
+                "governance": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "other": {
+              "government": 1
+            }
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 6,
+      "size": 1,
+      "representative_title": "Why has Sudan descended into mass slaughter? The answer goes far beyond simple ethnic conflict",
+      "shared_terms": [
+        "communities",
+        "conflict",
+        "simple",
+        "sometimes",
+        "sudan",
+        "african"
+      ],
+      "per_source_metrics": {
+        "theconversation.com": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "theconversation.com",
+          "summary": "theconversation.com emphasizes foreign_actors; broad coverage with neutral language.",
+          "key_emphasis": "foreign_actors"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "Since the 1950s, those seeking to seize control of the Sudanese state have repeatedly mobilised suppor t among disaffected groups in western Sudan – sometimes combining Arab and non-Arab communities, sometimes turning them against one another",
+            "source_url": "https://theconversation.com/why-has-sudan-descended-into-mass-slaughter-the-answer-goes-far-beyond-si mple-ethnic-conflict-269293?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Why has Sudan descended into mass slaughter? The answer goes far beyond simple ethnic conflict",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "Hemedti’s claims to represent the marginalised communities of the west are opportunistic and mend acious, but far from unprecedented",
+            "source_url": "https://theconversation.com/why-has-sudan-descended-into-mass-slaughter-the-answer-goes-far-beyond-si mple-ethnic-conflict-269293?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Why has Sudan descended into mass slaughter? The answer goes far beyond simple ethnic conflict",
+            "sentence_index": 1,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          },
+          {
+            "fact_text": "This war is not a simple Arab-African conflict",
+            "source_url": "https://theconversation.com/why-has-sudan-descended-into-mass-slaughter-the-answer-goes-far-beyond-si mple-ethnic-conflict-269293?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Why has Sudan descended into mass slaughter? The answer goes far beyond simple ethnic conflict",
+            "sentence_index": 2,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "theconversation.com": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Why has Sudan descended into mass slaughter? The answer goes far beyond simple ethnic conflict",
+            "source": "web",
+            "url": "https://theconversation.com/why-has-sudan-descended-into-mass-slaughter-the-answer-goes-far-beyond-simple-et hnic-conflict-269293?utm_source=valyu.ai&utm_medium=referral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "theconversation.com",
+            "summary": "theconversation.com emphasizes foreign_actors; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "other",
+              "topic_percent": {
+                "foreign_actors": 100.0
+              }
+            }
+          ],
+          "blame_distribution": {
+            "other": {}
+          }
+        },
+        "provenance_graph_link": null
+      }
+    },
+    {
+      "cluster_id": 7,
+      "size": 1,
+      "representative_title": "Sudan war: el-Fasher hospital worker describes 'state of terror' before fleeing alleged massacre",
+      "shared_terms": [
+        "alleged",
+        "april",
+        "before",
+        "between",
+        "civil",
+        "describes"
+      ],
+      "per_source_metrics": {
+        "bbc.com": {
+          "omission_score": 0.0,
+          "sentiment_delta": 0.0,
+          "loaded_language_score": 0.0,
+          "source_diversity": 1,
+          "stance_toward": {
+            "government": 0.0,
+            "protesters": 0.0,
+            "foreign": 0.0
+          },
+          "censorship_radar_metric": 0.0
+        }
+      },
+      "angle_cards": [
+        {
+          "source": "bbc.com",
+          "summary": "bbc.com emphasizes general context; broad coverage with neutral language.",
+          "key_emphasis": "general context"
+        }
+      ],
+      "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omiss ions Framing varies by topic presence rather than overt sentiment shifts.",
+      "provenance": {
+        "evidence": [
+          {
+            "fact_text": "The RSF has been fighting the Sudanese army since April 2023, when a power struggle between their lead ers erupted into a civil war",
+            "source_url": "https://www.bbc.com/news/articles/cqx31ezjr04o?utm_source=valyu.ai&utm_medium=referral",
+            "source_title": "Sudan war: el-Fasher hospital worker describes 'state of terror' before fleeing alleged massacre",
+            "sentence_index": 0,
+            "tool": "valyu_search",
+            "model": "deterministic_metrics_v1"
+          }
+        ]
+      },
+      "components": {
+        "censorship_radar_per_source": {
+          "bbc.com": 0.0
+        },
+        "articles_table": [
+          {
+            "title": "Sudan war: el-Fasher hospital worker describes 'state of terror' before fleeing alleged massacre",
+            "source": "web",
+            "url": "https://www.bbc.com/news/articles/cqx31ezjr04o?utm_source=valyu.ai&utm_medium=referral",
+            "timestamp": null
+          }
+        ],
+        "source_summaries": [
+          {
+            "source": "bbc.com",
+            "summary": "bbc.com emphasizes general context; broad coverage with neutral language.",
+            "key_emphasis": "general context"
+          }
+        ],
+        "framing_vectors": {
+          "coverage_matrix_percent": [
+            {
+              "class": "international",
+              "topic_percent": {}
+            }
+          ],
+          "blame_distribution": {
+            "international": {
+              "government": 1
+            }
+          }
+        },
+        "provenance_graph_link": null
+      }
+    }
+  ],
+  "version": 1,
+  "grandma_brief": "Topic: sudan war What happened: - As criticism grows, is UAE ready to walk away from Sudan’s RSF militi a - The stain on the record of the - The current Sudanese war began on April 15, 2023 - Since gaining independence in 1956, Sudan has endured chronic instability marked by 20 coup attempts, prolonged military rule, two civil wars, and the Darfur genocide - Wars in Sudan are often characterized as fights between the central government expanding and dominating peoples of the periphery, raising allegations of marginalization - Since the 1950s, those seeking to seize control of the Sudanese state have repeatedly mobilised support among disaffected groups in western Sudan – sometimes combining Arab and non-Arab communities, sometimes turning them against one another Agreed across sources: - sudanese - sudan - civil - since Contested or uncertain: - crises - created - criticism - militia - humanitarian - described - people - forced - million - killed - record - outside Notes: Some information may remain unverified; treat single-source claims cautiously. \nAdditional independent confirmation pending for several operational claims. \nContext remains fluid; neutral language is used intentionally. \nMultiple sources align on core timeline while peripheral details vary. \nHumanitarian conditions described rely on initial field assessments. \nReported figures may adjust as situation stabilizes and verification advances. \nStakeholder perspectives are summarized without endorsing any position. \nGeographical references reflect initial field dispatches subject to refinement. \nLogistical constraints influence pace of humanitarian access and reporting cycles. \nCasualty indicators remain preliminary pending consolidated medical tallies. \nDiplomatic engagement status draws on openly stated multilateral communications. \nAdditional independent confirmation pending for several operational claims. \nContext remains fluid; neutral language is used intentionally. \nMultiple sources align on core timeline while peripheral details vary. \nHumanitarian conditions described rely on initial field assessments. \nReported figures may adjust as situation stabilizes and verification advances.",
+  "ingestion_summary": {
+    "counts_by_class": {
+      "international": 3,
+      "diaspora_blog": 1,
+      "other": 4
+    },
+    "missing_classes": [
+      "state_aligned"
+    ],
+    "total_results": 8,
+    "requests": 4,
+    "retries": 0,
+    "fallback_used": false,
+    "mirror_flags": [
+      {
+        "url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general-say s?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://peoplesworld.org/article/the-truth-about-the-civil-war-in-sudan/?utm_source=valyu.ai&utm_medium=referral ",
+        "mirror_used": true
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Second_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://theconversation.com/why-has-sudan-descended-into-mass-slaughter-the-answer-goes-far-beyond-simple-ethnic -conflict-269293?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      },
+      {
+        "url": "https://www.bbc.com/news/articles/cqx31ezjr04o?utm_source=valyu.ai&utm_medium=referral",
+        "mirror_used": true
+      }
+    ],
+    "mirror_count": 8,
+    "total_cost_usd": 0.0135
+  },
+  "observability": {
+    "calls": 5,
+    "by_name": {
+      "valyu_search": {
+        "count": 5,
+        "failures": 0,
+        "latencies_ms": [
+          918.04,
+          1630.27,
+          526.25,
+          2298.62,
+          5710.29
+        ],
+        "p50_ms": 1630.27,
+        "avg_ms": 2216.69,
+        "max_ms": 5710.29
+      }
+    },
+    "emissions_kg": null
+  }
+}
