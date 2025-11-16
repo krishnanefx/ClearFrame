@@ -1,6 +1,6 @@
-# News Bias Analyzer
+# FactFlow: News Bias & Coverage Analyzer
 
-A Streamlit application for analyzing news bias using Valyu Search API and HolisticAI.
+Full‑stack application (Flask API + Vite/React frontend) for multi‑source news retrieval, bias & coverage analysis, and observability metrics. Built for The Great Agent Hack 2025.
 
 ## Features
 
@@ -10,50 +10,66 @@ A Streamlit application for analyzing news bias using Valyu Search API and Holis
 - 💡 **Smart Recommendations** - Get suggestions for balanced information
 - 📰 **Multi-Source Support** - Compare coverage across different news sources
 
-## Quick Start
+git clone https://github.com/krishnanefx/TheGreatAgentHack.git
+## Quick Start (Full Stack)
 
-### 1. Setup Environment
+### 1. Clone & Environment
 
 ```bash
-# Clone the repository
 git clone https://github.com/krishnanefx/TheGreatAgentHack.git
 cd TheGreatAgentHack
-
-# Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # On macOS/Linux
-
-# Install dependencies
+source .venv/bin/activate  # macOS/Linux
 pip install -r requirements.txt
 ```
 
-### 2. Configure API Keys
+### 2. Configure Credentials
 
-Create a `.env` file in the project root (or use existing `config/.env`):
+Create `.env` in the project root (or edit existing):
 
 ```bash
-# Valyu Search API
 VALYU_API_KEY=your_valyu_api_key
-
-# HolisticAI Credentials
 HOLISTIC_AI_TEAM_ID=your_team_id
 HOLISTIC_AI_API_TOKEN=your_api_token
+# Optional fast LLM override
+# FAST_LLM_MODEL=us.anthropic.claude-3-5-haiku-20241022-v1:0
 ```
 
-### 3. Run the App
+Frontend API target is auto‑synced by `start.sh` via `factflow-ui/.env (VITE_API_URL=...)`.
+
+### 3. Start Both Services
 
 ```bash
-streamlit run app.py
+chmod +x start.sh
+./start.sh                 # Uses API_PORT=5001 FRONTEND_PORT=5173 by default
+
+# Override ports (optional):
+API_PORT=5010 FRONTEND_PORT=5200 ./start.sh
 ```
 
-The app will open in your browser at `http://localhost:8501`
+Access:
+- API: `http://localhost:<API_PORT>/health`
+- Frontend UI: `http://localhost:<FRONTEND_PORT>`
 
-## How to Use
+### 4. Direct Backend Only (Optional)
 
-1. **Enter a Search Topic** - Type in any news topic (e.g., "climate change", "AI regulation")
-2. **Select Sources** - Choose from predefined categories or add custom sources
-3. **Analyze** - Click "Analyze News" to search and analyze articles
-4. **Review Results** - View AI analysis, sentiment metrics, and article details
+```bash
+API_PORT=5001 python api_server.py
+```
+
+### 5. CLI Mode (Deterministic JSON)
+
+```bash
+python basic_cli.py --query "sudan war" --json-only --output-file result.json
+cat result.json | jq '.bias_analysis.aggregate_stats.average_scores'
+```
+
+## Frontend Usage
+
+1. Enter a topic (e.g., “sudan war”, “AI regulation”).
+2. Click Analyze – frontend calls `/api/analyze` (Flask) with deterministic coverage + bias pipeline.
+3. View: status assessment, confidence, explanation, source list & bias metrics (omission, sentiment delta, loaded language, censorship radar, source diversity).
+4. Toggle Grandma Mode for simplified accessibility styling.
 
 ## Source Categories
 
@@ -63,43 +79,62 @@ The app will open in your browser at `http://localhost:8501`
 - **State-Aligned** - China Daily, RT, Xinhua
 - **Custom** - Add your own sources
 
-## Project Structure
+## Project Structure (Key Paths)
 
 ```
-TheGreatAgentHack/
-├── app.py                 # Main Streamlit application
-├── tutorials/
-│   └── holistic_ai_bedrock.py  # HolisticAI integration
-├── config/
-│   └── .env              # API keys
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
+api_server.py                # Flask API (health, /api/analyze, /api/search)
+basic_cli.py                 # Deterministic CLI pipeline & benchmarks
+start.sh                     # Unified startup script (API + Vite frontend)
+factflow-ui/                 # Vite + React + Tailwind frontend
+	src/pages/Index.tsx        # Entry page calling /api/analyze
+	src/components/            # UI + metrics visualization components
+src/analysis/bias_metrics.py # Deterministic per-article bias engine
+src/observability/           # Emissions + latency instrumentation
+config/config.yaml           # Override defaults
+tests/                       # Deterministic + coverage unit tests
 ```
 
 ## Requirements
 
-- Python 3.8+
-- Streamlit
-- LangChain + langchain-valyu
-- HolisticAI access
-- Valyu API access
+- Python 3.9+
+- Flask + flask-cors
+- LangChain / langchain-valyu / langgraph
+- HolisticAI access (Claude family models)
+- Valyu API key
+- Node 18+ (frontend)
+
+## Pricing
+
+Valyu Search API uses tiered pricing based on data source type:
+- **Open Databases**: $0.50 per 1k retrievals (arXiv, Wikipedia, PubMed)
+- **Web Search**: $1.50 per 1k retrievals (news, blogs, general web)
+- **Financial & Market Data**: $8.00 per 1k retrievals (stocks, crypto, markets)
+- **Proprietary Databases**: $30-50 per 1k retrievals (journals, premium content)
+
+See [PRICING.md](PRICING.md) for detailed pricing information and cost management tips.
 
 ## Troubleshooting
 
-### "Import error"
+| Issue | Fix |
+|-------|-----|
+| `ModuleNotFoundError: flask` | Activate venv; run `pip install -r requirements.txt` |
+| 404 on `/api/analyze` | Ensure `api_server.py` running & `VITE_API_URL` matches API_PORT |
+| Port already in use | Change `API_PORT` env or free process (`lsof -i :5001`) |
+| Slow responses | Enable fast mode in CLI (`--fast-mode`) or lower `max_results` |
+| Missing advanced analysis | Set `ENABLE_ADVANCED_ANALYSIS=true` in environment |
+| Determinism tests failing | Avoid modifying core tokenization or random functions |
+
+### Regenerating Frontend Env
+`VITE_API_URL` is auto‑written by `start.sh`. If manually changing ports:
 ```bash
-pip install -r requirements.txt
+echo "VITE_API_URL=http://localhost:5010" > factflow-ui/.env
 ```
 
-### "API key not found"
-- Ensure `.env` file exists in `config/` folder or project root
-- Check that API keys are correctly formatted
-- No quotes around keys in `.env`
-
-### "Search failed"
-- Verify Valyu API key is valid
-- Check internet connection
-- Try reducing number of results
+### Running Tests
+```bash
+source .venv/bin/activate
+pytest tests/test_bias_metrics_dashboard.py tests/test_consistency.py -q
+```
 
 ## Contributing
 
@@ -109,3 +144,8 @@ See [contributing.md](contributing.md) for guidelines.
 
 **Built for The Great Agent Hack 2025**  
 *Powered by Valyu Search + HolisticAI*
+
+---
+Maintainers: @krishnanefx
+
+Production note: Use a WSGI server (gunicorn/uwsgi) and proper caching layer for scaling beyond hackathon scope.

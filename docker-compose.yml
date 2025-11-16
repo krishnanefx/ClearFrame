@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "5001:5001"
+    environment:
+      - VALYU_API_KEY=${VALYU_API_KEY}
+      - HOLISTIC_AI_API_TOKEN=${HOLISTIC_AI_API_TOKEN}
+      - HOLISTIC_AI_TEAM_ID=${HOLISTIC_AI_TEAM_ID}
+      - API_PORT=5001
+      - FLASK_DEBUG=false
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend UI
+  ui:
+    build:
+      context: ./factflow-ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5001
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    name: factflow-network

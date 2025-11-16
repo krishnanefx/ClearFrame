@@ -27,18 +27,26 @@ Usage examples:
 """
 
 import os
+import sys
 import json
 import argparse
 import re
 import requests
+from pathlib import Path
 from typing import List, Optional, Tuple, Dict, Any
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 import logging
 
+BACKEND_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BACKEND_DIR.parent
+
 # Load environment variables explicitly
-load_dotenv(dotenv_path=".env")
-load_dotenv(dotenv_path=os.path.join("config", ".env"), override=False)
+load_dotenv(PROJECT_ROOT / ".env")
+load_dotenv(PROJECT_ROOT / "config" / ".env", override=False)
+
+# Ensure repo root is on the path for src imports when running from backend/
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # Imports
 # Robust import for HolisticAI chat model helper
@@ -50,7 +58,6 @@ except Exception:
     except Exception:
         # Load directly from file as last resort
         import importlib.util
-        import sys
         _root = os.path.dirname(os.path.abspath(__file__))
         _candidates = [
             os.path.join(_root, "tutorials", "holistic_ai_bedrock.py"),
@@ -79,7 +86,7 @@ from langgraph.checkpoint.memory import MemorySaver
 # Import new utilities
 from src.utils.config_loader import Config
 from src.utils.retry_handler import retry_with_backoff, RateLimitError, APIError
-from src.observability.instrumentation import instrument, start_emissions_tracker, stop_emissions_tracker, get_metrics, reset_metrics
+from src.observability.instrumentation import instrument, start_emissions_tracker, stop_emissions_tracker, get_metrics, reset_metrics, track_api_request, track_llm_call
 from src.analysis.bias_metrics import (
     compute_censorship_radar,
     generate_grandma_brief,
@@ -88,6 +95,14 @@ from src.analysis.bias_metrics import (
     build_dashboard_payload,
     classify_source,
     build_unified_deterministic_payload,
+    analyze_articles_bias,
+    ArticleBiasProfile,
+)
+from src.analysis.advanced_bias_detector import (
+    analyze_bias_advanced,
+    compare_article_narratives,
+    detect_framing_techniques,
+    analyze_power_dynamics,
 )
 
 # Optional imports with graceful fallback
@@ -118,8 +133,31 @@ def mask(s: Optional[str], keep: int = 4) -> str:
 # Pydantic Schemas for Structured Output
 # ============================================================================
 
+class ArticleBiasDetail(BaseModel):
+    """Detailed bias analysis for a single article."""
+    url: str
+    title: str
+    source: str
+    bias_scores: Dict[str, float] = Field(description="Multiple bias dimension scores")
+    classification: Dict[str, str] = Field(description="Bias category, credibility tier, source type")
+    detected_features: Dict[str, List[str]] = Field(description="Detected bias indicators")
+    advanced_analysis: Optional[Dict[str, Any]] = Field(description="LLM-based advanced analysis", default=None)
+
+
 class BiasAnalysis(BaseModel):
-    """Structured bias analysis output."""
+    """Structured bias analysis output with per-article details."""
+    article_count: int = Field(description="Number of articles analyzed")
+    articles: List[ArticleBiasDetail] = Field(description="Per-article bias analysis")
+    aggregate_stats: Dict[str, Any] = Field(description="Aggregate statistics across articles")
+    narrative_comparison: Optional[Dict[str, Any]] = Field(description="Cross-article narrative analysis", default=None)
+    overall_assessment: str = Field(description="High-level summary of bias landscape")
+    recommendations: List[str] = Field(description="3-5 recommendations for balanced info")
+    cited_urls: List[str] = Field(description="URLs referenced in analysis")
+
+
+# Legacy model for backwards compatibility
+class LegacyBiasAnalysis(BaseModel):
+    """Legacy structured bias analysis output."""
     overall_bias_score: float = Field(description="Overall bias score from -1 (left) to 1 (right), 0 is neutral")
     sentiment: str = Field(description="Overall sentiment: positive, negative, or neutral")
     key_themes: List[str] = Field(description="List of 3-5 key themes identified")
@@ -143,42 +181,82 @@ class ArticleSummary(BaseModel):
 
 
 class NewsAnalysisReport(BaseModel):
-    """Complete structured report."""
+    """Complete structured report with per-article bias analysis."""
     query: str
     num_articles: int
-    analysis: BiasAnalysis
-    article_summaries: List[ArticleSummary]
+    bias_analysis: BiasAnalysis
+    top_articles: List[ArticleBiasDetail] = Field(description="Top articles by relevance", default=[])
+    ingestion_summary: Optional[Dict[str, Any]] = Field(description="Metadata about article ingestion", default=None)
 
 
 # ============================================================================
 # Custom Tools (Tutorial 2 Pattern)
 # ============================================================================
-
 @tool
 def calculate_bias_score(text: str, source: str) -> float:
-    """Calculate a simple bias score for an article.
+    """Calculate a bias score for an article using LLM analysis.
     
     Args:
         text: Article text to analyze
         source: Source domain (e.g., 'bbc.com', 'foxnews.com')
         
     Returns:
-        Bias score from -1 (left-leaning) to 1 (right-leaning), 0 is neutral
+        Bias score from -50 (left-leaning) to 50 (right-leaning), 0 is neutral
     """
-    # Simple keyword-based heuristic (in production, use ML model)
-    left_keywords = ['progressive', 'liberal', 'reform', 'diversity', 'climate action']
-    right_keywords = ['conservative', 'traditional', 'free market', 'deregulation']
-    
-    text_lower = text.lower()
-    left_count = sum(1 for kw in left_keywords if kw in text_lower)
-    right_count = sum(1 for kw in right_keywords if kw in text_lower)
-    
-    total = left_count + right_count
-    if total == 0:
-        return 0.0
-    
-    score = (right_count - left_count) / total
-    return round(score, 2)
+    try:
+        # Use a fast LLM model for bias analysis
+        llm = get_chat_model(model_name=FAST_LLM_MODEL, temperature=0.0, max_tokens=150)
+        
+        system_prompt = (
+            "You are an expert political bias analyst. Analyze the given text and return ONLY a single number "
+            "representing the political bias score from -50 to 50, where:\n"
+            "- -50 to -30: Strong left-leaning bias\n"
+            "- -29 to -10: Moderate left-leaning bias\n"
+            "- -9 to 9: Neutral or balanced\n"
+            "- 10 to 29: Moderate right-leaning bias\n"
+            "- 30 to 50: Strong right-leaning bias\n\n"
+            "Consider factors like: framing, language choice, source selection, emphasis on certain viewpoints, "
+            "loaded language, and omission of perspectives. Return ONLY the numeric score, nothing else."
+        )
+        
+        user_prompt = f"Source: {source}\n\nText to analyze:\n{text[:2000]}"  # Limit text to 2000 chars
+        
+        track_llm_call()  # Track emissions
+        response = llm.invoke([
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
+        ])
+        
+        content = getattr(response, "content", str(response)).strip()
+        
+        # Extract numeric score from response
+        import re
+        match = re.search(r'-?\d+(?:\.\d+)?', content)
+        if match:
+            score = float(match.group())
+            # Clamp to -50 to 50 range
+            score = max(-50.0, min(50.0, score))
+            return round(score, 2)
+        else:
+            logger.warning(f"Could not extract bias score from LLM response: {content}")
+            return 0.0
+            
+    except Exception as e:
+        logger.warning(f"LLM bias analysis failed: {e}. Falling back to keyword heuristic.")
+        # Fallback to simple keyword-based heuristic
+        left_keywords = ['progressive', 'liberal', 'reform', 'diversity', 'climate action']
+        right_keywords = ['conservative', 'traditional', 'free market', 'deregulation']
+        
+        text_lower = text.lower()
+        left_count = sum(1 for kw in left_keywords if kw in text_lower)
+        right_count = sum(1 for kw in right_keywords if kw in text_lower)
+        
+        total = left_count + right_count
+        if total == 0:
+            return 0.0
+        
+        score = ((right_count - left_count) / total) * 50
+        return round(score, 2)
 
 
 @tool
@@ -514,7 +592,7 @@ def run_valyu_search(query: str,
                      search_type: str,
                      max_results: int,
                      relevance_threshold: Optional[float],
-                     max_price: Optional[float],
+                     max_price: Optional[float],  # Pricing: Open DB $0.50/1k, Web $1.50/1k, Financial $8/1k, Proprietary $30-50/1k
                      language: Optional[str] = None,  # Not currently supported by API
                      region: Optional[str] = None,    # Not currently supported by API
                      date_from: Optional[str] = None,
@@ -526,6 +604,11 @@ def run_valyu_search(query: str,
                      category: Optional[str] = None,
                      country_code: Optional[str] = None,
                      is_tool_call: bool = True):
+    # Track API request and LLM call for emissions calculation (5g CO2e per request)
+    # Valyu uses LLMs under the hood, so it counts as both API and LLM call
+    track_api_request()
+    track_llm_call()
+    
     tool = ValyuSearchTool(valyu_api_key=os.getenv("VALYU_API_KEY"))
     q = build_search_query(query, sources)
     kwargs = {
@@ -592,10 +675,41 @@ def run_valyu_search(query: str,
 
 @instrument("analyze_pipeline")
 def analyze_pipeline(query: str, articles: List[dict], llm) -> str:
-    articles_text = "\n\n".join([
-        f"Title: {a.get('title','N/A')}\nSource: {a.get('source','N/A')}\nURL: {a.get('url','N/A')}\nDescription: {a.get('description','N/A')}"
-        for a in articles[:10]
-    ])
+    # First, run per-article bias analysis
+    bias_results = analyze_articles_bias(articles)
+    
+    # Build enhanced article text with bias scores
+    articles_text_parts = []
+    for i, a in enumerate(articles[:10]):
+        bias_info = ""
+        if i < len(bias_results['articles']):
+            bias_detail = bias_results['articles'][i]
+            bias_scores = bias_detail.get('bias_scores', {})
+            classification = bias_detail.get('classification', {})
+            bias_info = f"\n  Bias: {classification.get('bias_category', 'unknown')} | Political Lean: {bias_scores.get('political_lean', 0):.0f} | Overall Bias: {bias_scores.get('overall_bias', 0):.0f}/50"
+        
+        articles_text_parts.append(
+            f"Article {i+1}:\n"
+            f"Title: {a.get('title','N/A')}\n"
+            f"Source: {a.get('source','N/A')} (Credibility: {bias_results['articles'][i].get('classification', {}).get('credibility_tier', 'unknown') if i < len(bias_results['articles']) else 'unknown'})\n"
+            f"URL: {a.get('url','N/A')}\n"
+            f"Description: {a.get('description','N/A')}"
+            f"{bias_info}"
+        )
+    
+    articles_text = "\n\n".join(articles_text_parts)
+    
+    # Add aggregate bias statistics
+    aggregate = bias_results.get('aggregate_stats', {})
+    bias_summary = f"""
+BIAS ANALYSIS SUMMARY:
+- Articles analyzed: {bias_results.get('article_count', 0)}
+- Average overall bias: {aggregate.get('average_scores', {}).get('overall_bias', 0):.1f}/50
+- Political distribution: {aggregate.get('coverage_assessment', {}).get('left_leaning_articles', 0)} left, {aggregate.get('coverage_assessment', {}).get('neutral_articles', 0)} neutral, {aggregate.get('coverage_assessment', {}).get('right_leaning_articles', 0)} right
+- Credibility: {aggregate.get('coverage_assessment', {}).get('high_credibility_count', 0)} high, {aggregate.get('coverage_assessment', {}).get('low_credibility_count', 0)} low
+- Propaganda techniques detected: {aggregate.get('propaganda_analysis', {}).get('total_techniques_detected', 0)}
+- Source types: {aggregate.get('category_breakdown', {}).get('source_types', {})}
+"""
     
     # Detect query type
     query_lower = query.lower()
@@ -625,19 +739,22 @@ def analyze_pipeline(query: str, articles: List[dict], llm) -> str:
     
     system_prompt = (
         "You are an expert investigative journalist and news analyst specializing in conflict reporting, corruption investigations, and bias detection.\n\n"
+        "You have been provided with per-article bias analysis scores. Use this data to inform your analysis.\n\n"
         "Analyze the provided news articles and provide:\n"
         "1) Summary of key facts and claims\n"
-        "2) Source credibility and diversity assessment\n"
-        "3) Potential bias indicators and narrative differences\n"
+        "2) Source credibility and diversity assessment (use the bias scores provided)\n"
+        "3) Potential bias indicators and narrative differences (reference the detected bias categories)\n"
         "4) Missing perspectives or coverage gaps\n"
         "5) Factual concerns or unverified claims\n"
         "6) Recommendations for seeking balanced information\n\n"
         f"{focus_areas}\n\n"
-        "Be objective, cite specific examples with URLs, and clearly mark unverified information."
+        "Be objective, cite specific examples with URLs, and clearly mark unverified information.\n"
+        "Reference the bias scores in your analysis to explain which sources lean left/right and why."
     )
-    user_prompt = f"""Analyze these news articles about "{query}":\n\n{articles_text}\n\nProvide a comprehensive, fact-checked analysis with citations."""
+    user_prompt = f"""Analyze these news articles about "{query}":\n\n{bias_summary}\n\n{articles_text}\n\nProvide a comprehensive, fact-checked analysis with citations, incorporating the bias scores provided."""
 
     messages = [SystemMessage(content=system_prompt), HumanMessage(content=user_prompt)]
+    track_llm_call()  # Track emissions
     resp = llm.invoke(messages)
     return getattr(resp, "content", str(resp))
 
@@ -747,17 +864,117 @@ def analyze_agent(query: str, sources: Optional[List[str]], trace: bool, custom_
 
 
 def analyze_structured(query: str, articles: List[dict], llm) -> Any:
-    """Analyze with structured Pydantic output."""
-    structured_llm = llm.with_structured_output(BiasAnalysis)
+    """Analyze with structured per-article bias output."""
     
-    articles_text = "\n\n".join([
-        f"Title: {a.get('title','N/A')}\nSource: {a.get('source','N/A')}\nURL: {a.get('url','N/A')}\nDescription: {a.get('description','N/A')}"
-        for a in articles[:10]
-    ])
+    # Run per-article bias analysis
+    bias_results = analyze_articles_bias(articles)
     
-    prompt = f"""Analyze these articles about '{query}' and provide structured bias analysis:\n\n{articles_text}"""
+    # Optionally enhance with LLM-based advanced analysis for top articles
+    if len(articles) > 0:
+        try:
+            # Analyze top 5 articles with advanced LLM analysis
+            for i, article in enumerate(articles[:5]):
+                advanced = analyze_bias_advanced(article, llm)
+                framing = detect_framing_techniques(article, llm)
+                power = analyze_power_dynamics(article)
+                
+                # Add to the article's analysis
+                if i < len(bias_results['articles']):
+                    bias_results['articles'][i]['advanced_analysis'] = {
+                        **advanced,
+                        'framing_techniques': framing,
+                        'power_dynamics': power
+                    }
+        except Exception as e:
+            logger.warning(f"Advanced analysis failed for some articles: {e}")
     
-    result = structured_llm.invoke(prompt)
+    # Add narrative comparison across all articles
+    try:
+        narrative_comparison = compare_article_narratives(articles, llm)
+        bias_results['narrative_comparison'] = narrative_comparison
+    except Exception as e:
+        logger.warning(f"Narrative comparison failed: {e}")
+    
+    # Generate overall assessment and recommendations
+    aggregate = bias_results.get('aggregate_stats', {})
+    avg_bias = aggregate.get('average_scores', {}).get('overall_bias', 0)
+    coverage = aggregate.get('coverage_assessment', {})
+    
+    # Build assessment
+    assessment_parts = []
+    if avg_bias > 60:
+        assessment_parts.append("High overall bias detected across sources.")
+    elif avg_bias > 40:
+        assessment_parts.append("Moderate bias present in coverage.")
+    else:
+        assessment_parts.append("Relatively balanced coverage overall.")
+    
+    left_count = coverage.get('left_leaning_articles', 0)
+    right_count = coverage.get('right_leaning_articles', 0)
+    neutral_count = coverage.get('neutral_articles', 0)
+    
+    if left_count > right_count * 2:
+        assessment_parts.append("Coverage skews left-leaning.")
+    elif right_count > left_count * 2:
+        assessment_parts.append("Coverage skews right-leaning.")
+    elif neutral_count > (left_count + right_count):
+        assessment_parts.append("Most sources maintain neutral framing.")
+    else:
+        assessment_parts.append("Mixed political perspectives represented.")
+    
+    high_cred = coverage.get('high_credibility_count', 0)
+    low_cred = coverage.get('low_credibility_count', 0)
+    if high_cred > low_cred * 2:
+        assessment_parts.append("Strong source credibility overall.")
+    elif low_cred > high_cred:
+        assessment_parts.append("Caution: many low-credibility sources.")
+    
+    overall_assessment = " ".join(assessment_parts)
+    
+    # Generate recommendations
+    recommendations = []
+    if avg_bias > 50:
+        recommendations.append("Seek additional sources from different political perspectives")
+    if low_cred > 2:
+        recommendations.append("Verify claims with high-credibility sources (AP, Reuters, BBC)")
+    if left_count == 0 or right_count == 0:
+        recommendations.append("Read sources from both left and right to understand all viewpoints")
+    
+    propaganda_count = aggregate.get('propaganda_analysis', {}).get('total_techniques_detected', 0)
+    if propaganda_count > 5:
+        recommendations.append("High propaganda detected - critically evaluate emotional language and framing")
+    
+    if neutral_count == 0:
+        recommendations.append("All sources show bias - seek neutral international sources")
+    
+    recommendations.append("Cross-reference facts across multiple independent sources")
+    
+    # Get all URLs
+    cited_urls = [a.get('url', '') for a in articles if a.get('url')]
+    
+    # Build BiasAnalysis model
+    articles_detail = []
+    for article_analysis in bias_results.get('articles', []):
+        articles_detail.append(ArticleBiasDetail(
+            url=article_analysis.get('url', ''),
+            title=article_analysis.get('title', ''),
+            source=article_analysis.get('source', ''),
+            bias_scores=article_analysis.get('bias_scores', {}),
+            classification=article_analysis.get('classification', {}),
+            detected_features=article_analysis.get('detected_features', {}),
+            advanced_analysis=article_analysis.get('advanced_analysis')
+        ))
+    
+    result = BiasAnalysis(
+        article_count=len(articles),
+        articles=articles_detail,
+        aggregate_stats=aggregate,
+        narrative_comparison=bias_results.get('narrative_comparison'),
+        overall_assessment=overall_assessment,
+        recommendations=recommendations[:5],
+        cited_urls=cited_urls
+    )
+    
     return result
 
 
@@ -962,6 +1179,7 @@ def analyze_debate(query: str, sources: Optional[List[str]], trace: bool, llm: A
     for role, desc in roles.items():
         agent = create_react_agent(llm, tools=[search_tool])
         prompt = f"Role: {role}\nGuidance: {desc}\n{base_prompt}\nProduce a concise argument (facts + 3 claims + 2 caveats)."
+        track_llm_call()  # Track emissions for agent invocation
         result = agent.invoke({"messages": [HumanMessage(content=prompt)]})
         msgs = result.get("messages", []) if isinstance(result, dict) else []
         content = ""
@@ -973,6 +1191,7 @@ def analyze_debate(query: str, sources: Optional[List[str]], trace: bool, llm: A
         "Compare the three arguments and produce a debate summary:\n"
         "- Shared factual ground\n- Key divergences\n- Potential biases\n- Most evidence-backed claims\n- Missing perspectives\n"
     )
+    track_llm_call()  # Track emissions
     synthesis = llm.invoke([
         SystemMessage(content="You synthesize debate viewpoints objectively."),
         HumanMessage(content=synth_prompt + json.dumps(outputs))
@@ -1245,13 +1464,17 @@ def fetch_with_category_coverage(query: str, total_max: int = 9, per_class_min: 
 
 def main():
     p = argparse.ArgumentParser(description="Enhanced Valyu + HolisticAI CLI with Advanced Features (Valyu Deepsearch)")
+    p.add_argument("--mode", 
+                     choices=["pipeline", "agent", "structured", "conversation", "debate", "unified-deterministic"], 
+                     default="unified-deterministic", 
+                     help="Execution mode")
     p.add_argument("--query", help="Topic to research (omit when using --benchmark-set)")
     # Modes removed: unified deterministic output only
     p.add_argument("--sources", help="Comma-separated sites, e.g., bbc.com,cnn.com")
-    p.add_argument("--search-type", choices=["all", "web", "proprietary"], default="all")
+    p.add_argument("--search-type", choices=["all", "web", "proprietary"], default="web")
     p.add_argument("--max-results", type=int, default=5)
     p.add_argument("--relevance-threshold", type=float, default=0.0)
-    p.add_argument("--max-price", type=float, default=0.0)
+    p.add_argument("--max-price", type=float, default=0.0, help="Maximum cost in USD (0.0 = unlimited). Pricing: Open DB $0.50/1k, Web $1.50/1k, Financial $8/1k, Proprietary $30-50/1k")
     p.add_argument("--trace", action="store_true", help="Show agent trace")
     p.add_argument("--tools", help="Custom tools: bias,credibility,conflict,corruption,fact_check,citations,language,nlp_bias,narrative,evidence,propaganda (comma-separated). Auto-detected based on query if not specified.")
     
@@ -1303,7 +1526,7 @@ def main():
     custom_tools = args.tools.split(",") if args.tools else None
     response_length = args.response_length if hasattr(args, 'response_length') else "large"
     included_sources = [s.strip() for s in args.include_sources.split(",")] if getattr(args, "include_sources", None) else None
-    excluded_sources = [s.strip() for s in args.exclude_sources.split(",")] if getattr(args, "exclude_sources", None) else None
+    excluded_sources = [s.strip() for s in args.excludeSources.split(",")] if getattr(args, "exclude_sources", None) else None
     fast_mode = bool(args.fast_mode) if hasattr(args, 'fast_mode') else False
     category = args.category if hasattr(args, 'category') else None
     country_code = args.country_code if hasattr(args, 'country_code') else None
@@ -1313,6 +1536,7 @@ def main():
         print(f"\n{'='*60}")
         print(f"Query: {query}")
         print(f"Mode: unified-deterministic")
+        print(f"Search Type: {args.search_type}")
     if args.sources:
         print(f"Sources: {args.sources}")
     if custom_tools:
@@ -1416,8 +1640,57 @@ def main():
     per_class_min = max(1, min(3, args.max_results // 2))
     total_cap = max(args.max_results, 9)
     covered_articles, ingestion_meta = fetch_with_category_coverage(args.query, total_cap, per_class_min, response_length)
-    unified = build_unified_deterministic_payload(covered_articles, args.query)
-    unified["ingestion_summary"] = ingestion_meta
+    
+    if not args.json_only:
+        print(f"\n📊 Fetched {len(covered_articles)} articles across {len(ingestion_meta.get('counts_by_class', {}))} source categories")
+        print(f"   Source distribution: {ingestion_meta.get('counts_by_class', {})}")
+        if ingestion_meta.get('missing_classes'):
+            print(f"   ⚠️  Missing classes: {', '.join(ingestion_meta['missing_classes'])}")
+    
+    # Use the new per-article bias system with LLM integration
+    llm = get_chat_model()
+    
+    # Analyze bias for each article
+    bias_results = analyze_articles_bias(covered_articles)
+    
+    # Optionally enhance with LLM-based advanced analysis for top articles
+    # Note: Advanced analysis can be enabled by setting ENABLE_ADVANCED_ANALYSIS=true
+    enable_advanced = os.getenv('ENABLE_ADVANCED_ANALYSIS', 'false').lower() == 'true'
+    
+    if enable_advanced and not args.json_only:
+        print(f"\n🔍 Analyzing bias dimensions for {min(5, len(covered_articles))} top articles with LLM...")
+    
+    if enable_advanced:
+        for i, article in enumerate(covered_articles[:5]):
+            try:
+                advanced = analyze_bias_advanced(article, llm)
+                framing = detect_framing_techniques(article, llm)
+                power = analyze_power_dynamics(article)
+                
+                if i < len(bias_results['articles']):
+                    bias_results['articles'][i]['advanced_analysis'] = {
+                        **advanced,
+                        'framing_techniques': framing,
+                        'power_dynamics': power
+                    }
+            except Exception as e:
+                logger.warning(f"Advanced analysis failed for article {i}: {e}")
+    
+    # Add narrative comparison (skip for now to avoid LLM JSON issues)
+    # try:
+    #     narrative_comparison = compare_article_narratives(covered_articles, llm)
+    #     bias_results['narrative_comparison'] = narrative_comparison
+    # except Exception as e:
+    #     logger.warning(f"Narrative comparison failed: {e}")
+    
+    # Build unified payload
+    unified = {
+        "query": args.query,
+        "search_type": args.search_type,
+        "article_count": len(covered_articles),
+        "bias_analysis": bias_results,
+        "ingestion_summary": ingestion_meta
+    }
 
     # Stop emissions tracker & optionally print metrics
     stop_emissions_tracker()

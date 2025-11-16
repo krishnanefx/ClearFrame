@@ -1,0 +1,994 @@
+{
+  "query": "war in sudan",
+  "unified_deterministic_payload": {
+    {
+  "query": "war in sudan",
+  "unified_deterministic_payload": {
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "size": 1,
+        "representative_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+        "shared_terms": [
+          "sudan",
+          "control",
+          "created",
+          "crises",
+          "described",
+          "forces"
+        ],
+        "per_source_metrics": {
+          "theguardian.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "theguardian.com",
+            "summary": "theguardian.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "As criticism grows, is UAE ready to walk away from Sudan\u2019s RSF militia",
+              "source_url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general-says?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "The two-year civil war between the Sudanese armed forces (SAF) and the RSF has created what the UN has described as one of the worst humanitarian crises of the 21st",
+              "source_url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general-says?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "theguardian.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudan civil war spiralling out of control, UN secretary general says | Sudan | The Guardian",
+              "source": "web",
+              "url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general-says?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "theguardian.com",
+              "summary": "theguardian.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors, humanitarian"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "international",
+                "topic_percent": {
+                  "foreign_actors": 100.0,
+                  "humanitarian": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "international": {}
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 1,
+        "size": 1,
+        "representative_title": "War in Sudan: Humanitarian, fighting, control developments, October 2025 | Sudan war News | Al Jazeera",
+        "shared_terms": [
+          "sudan",
+          "crimes",
+          "forces",
+          "against",
+          "allegedly",
+          "armed"
+        ],
+        "per_source_metrics": {
+          "aljazeera.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "aljazeera.com",
+            "summary": "aljazeera.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "Sudan\u2019s civil war between the regular army known as the Sudan Armed Forces and the paramilitary Rapid Support Forces continues unabated",
+              "source_url": "https://www.aljazeera.com/news/2025/10/31/war-in-sudan-october-round-up?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "War in Sudan: Humanitarian, fighting, control developments, October 2025 | Sudan war News | Al Jazeera",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "The conflict is well into its third year and has seen both sides allegedly commit war crimes and crimes against humanity",
+              "source_url": "https://www.aljazeera.com/news/2025/10/31/war-in-sudan-october-round-up?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "War in Sudan: Humanitarian, fighting, control developments, October 2025 | Sudan war News | Al Jazeera",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "aljazeera.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "War in Sudan: Humanitarian, fighting, control developments, October 2025 | Sudan war News | Al Jazeera",
+              "source": "web",
+              "url": "https://www.aljazeera.com/news/2025/10/31/war-in-sudan-october-round-up?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "aljazeera.com",
+              "summary": "aljazeera.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors, humanitarian"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "international",
+                "topic_percent": {
+                  "foreign_actors": 100.0,
+                  "humanitarian": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "international": {
+                "government": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 2,
+        "size": 1,
+        "representative_title": "Sudan\u2019s brutal civil war \u2013 what has happened in El Fasher? | Sudan | The Guardian",
+        "shared_terms": [
+          "between",
+          "civil",
+          "sudan",
+          "across",
+          "after",
+          "april"
+        ],
+        "per_source_metrics": {
+          "theguardian.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "theguardian.com",
+            "summary": "theguardian.com emphasizes foreign_actors; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "That operation ended with the genocide of up to 300,000 people",
+              "source_url": "https://www.theguardian.com/world/2025/oct/31/sudan-civil-war-el-fasher-explained?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan\u2019s brutal civil war \u2013 what has happened in El Fasher? | Sudan | The Guardian",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "A civil war between the RSF and the Sudanese army began in April 2023 after a power struggle between the two forces, and the conflict quickly spread across the country",
+              "source_url": "https://www.theguardian.com/world/2025/oct/31/sudan-civil-war-el-fasher-explained?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan\u2019s brutal civil war \u2013 what has happened in El Fasher? | Sudan | The Guardian",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "theguardian.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudan\u2019s brutal civil war \u2013 what has happened in El Fasher? | Sudan | The Guardian",
+              "source": "web",
+              "url": "https://www.theguardian.com/world/2025/oct/31/sudan-civil-war-el-fasher-explained?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "theguardian.com",
+              "summary": "theguardian.com emphasizes foreign_actors; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "international",
+                "topic_percent": {
+                  "foreign_actors": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "international": {
+                "government": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 3,
+        "size": 1,
+        "representative_title": "Sudan\u2019s split in two (again) is now more concrete",
+        "shared_terms": [
+          "sudan",
+          "enough",
+          "network",
+          "again",
+          "april",
+          "began"
+        ],
+        "per_source_metrics": {
+          "continent.substack.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "continent.substack.com",
+            "summary": "continent.substack.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "\u201cWe don\u2019t have enough resources or funding to make even enough meals a day,\u201d said Mahmoud, the Darfur genocide survivor",
+              "source_url": "https://continent.substack.com/p/sudans-split-in-two-again-is-now?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan\u2019s split in two (again) is now more concrete",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "She is now a director at the IDP Humanitarian Network, Sudan\u2019s largest indigenous-led aid network",
+              "source_url": "https://continent.substack.com/p/sudans-split-in-two-again-is-now?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan\u2019s split in two (again) is now more concrete",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "The group has been sending cash transfers to volunteers inside Sudan during the ongoing war between the SAF and the RSF, which began in April 2023",
+              "source_url": "https://continent.substack.com/p/sudans-split-in-two-again-is-now?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan\u2019s split in two (again) is now more concrete",
+              "sentence_index": 2,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "continent.substack.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudan\u2019s split in two (again) is now more concrete",
+              "source": "web",
+              "url": "https://continent.substack.com/p/sudans-split-in-two-again-is-now?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "continent.substack.com",
+              "summary": "continent.substack.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors, humanitarian"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "diaspora_blog",
+                "topic_percent": {
+                  "foreign_actors": 100.0,
+                  "humanitarian": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "diaspora_blog": {}
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 4,
+        "size": 1,
+        "representative_title": "China\u2019s Arm-Length Approach to Sudan Civil War",
+        "shared_terms": [
+          "approach",
+          "april",
+          "broke",
+          "called",
+          "ceasefire",
+          "china"
+        ],
+        "per_source_metrics": {
+          "jessemarks.substack.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "jessemarks.substack.com",
+            "summary": "jessemarks.substack.com emphasizes diplomacy, economic, foreign_actors; broad coverage with neutral language.",
+            "key_emphasis": "diplomacy, economic, foreign_actors"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "When the war broke out in April 2023, the Chinese foreign ministry publicly called for an immediate ceasefire and a transition process, warning that outside interference had deepened the turmoil and put regional investment, especially its",
+              "source_url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "China\u2019s Arm-Length Approach to Sudan Civil War",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "jessemarks.substack.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "China\u2019s Arm-Length Approach to Sudan Civil War",
+              "source": "web",
+              "url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "jessemarks.substack.com",
+              "summary": "jessemarks.substack.com emphasizes diplomacy, economic, foreign_actors; broad coverage with neutral language.",
+              "key_emphasis": "diplomacy, economic, foreign_actors"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "diaspora_blog",
+                "topic_percent": {
+                  "diplomacy": 100.0,
+                  "economic": 100.0,
+                  "foreign_actors": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "diaspora_blog": {
+                "foreign": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 5,
+        "size": 1,
+        "representative_title": "Iran\u2019s Hidden Hand in Sudan: Proxy Wars Fuel Human Tragedy",
+        "shared_terms": [
+          "sudan",
+          "armed",
+          "attention",
+          "backer",
+          "decisive",
+          "elsewhere"
+        ],
+        "per_source_metrics": {
+          "holliesmckay.substack.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "holliesmckay.substack.com",
+            "summary": "holliesmckay.substack.com emphasizes general context; broad coverage with neutral language.",
+            "key_emphasis": "general context"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "While global attention remains fixed on wars elsewhere in the Middle East, Iran is quietly waging a shadow war in Sudan, where Tehran is emerging as a decisive backer of the increasingly Islamist military, the Sudanese Armed Forces",
+              "source_url": "https://holliesmckay.substack.com/p/irans-hidden-hand-in-sudan-proxy?action=share&utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Iran\u2019s Hidden Hand in Sudan: Proxy Wars Fuel Human Tragedy",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "holliesmckay.substack.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Iran\u2019s Hidden Hand in Sudan: Proxy Wars Fuel Human Tragedy",
+              "source": "web",
+              "url": "https://holliesmckay.substack.com/p/irans-hidden-hand-in-sudan-proxy?action=share&utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "holliesmckay.substack.com",
+              "summary": "holliesmckay.substack.com emphasizes general context; broad coverage with neutral language.",
+              "key_emphasis": "general context"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "diaspora_blog",
+                "topic_percent": {}
+              }
+            ],
+            "blame_distribution": {
+              "diaspora_blog": {
+                "government": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 6,
+        "size": 1,
+        "representative_title": "Sudanese civil war (2023\u2013present) - Wikipedia",
+        "shared_terms": [
+          "civil",
+          "attempts",
+          "chronic",
+          "darfur",
+          "devastating",
+          "endured"
+        ],
+        "per_source_metrics": {
+          "en.wikipedia.org": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0208,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "en.wikipedia.org",
+            "summary": "en.wikipedia.org emphasizes stability; broad coverage with some loaded wording.",
+            "key_emphasis": "stability"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "Since gaining independence in 1956, Sudan has endured chronic instability marked by 20 coup attempts, prolonged military rule, two devastating civil wars, and the Darfur genocide",
+              "source_url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023\u2013present)?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudanese civil war (2023\u2013present) - Wikipedia",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "The war erupted amid tensions over the integration of the RSF into the army following the 2021 coup, starting with",
+              "source_url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023\u2013present)?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudanese civil war (2023\u2013present) - Wikipedia",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "en.wikipedia.org": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudanese civil war (2023\u2013present) - Wikipedia",
+              "source": "web",
+              "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023\u2013present)?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "en.wikipedia.org",
+              "summary": "en.wikipedia.org emphasizes stability; broad coverage with some loaded wording.",
+              "key_emphasis": "stability"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "other",
+                "topic_percent": {
+                  "stability": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "other": {
+                "government": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 7,
+        "size": 1,
+        "representative_title": "Sudan war: Aid teams plead for access to thousands trapped in El Fasher | UN News",
+        "shared_terms": [
+          "fasher",
+          "people",
+          "still",
+          "thousands",
+          "trapped",
+          "access"
+        ],
+        "per_source_metrics": {
+          "news.un.org": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "news.un.org",
+            "summary": "news.un.org emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "Just how many people are still trapped in the Sudanese city of El Fasher",
+              "source_url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan war: Aid teams plead for access to thousands trapped in El Fasher | UN News",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "That\u2019s the burning question for relatives of the many thousands of people believed to still be there, since paramilitary fighters overran the regional capital of North Darfur last month, after a 500-day siege",
+              "source_url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan war: Aid teams plead for access to thousands trapped in El Fasher | UN News",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "news.un.org": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudan war: Aid teams plead for access to thousands trapped in El Fasher | UN News",
+              "source": "web",
+              "url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "news.un.org",
+              "summary": "news.un.org emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors, humanitarian"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "other",
+                "topic_percent": {
+                  "foreign_actors": 100.0,
+                  "humanitarian": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "other": {
+                "government": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 8,
+        "size": 1,
+        "representative_title": "South Sudanese Civil War - Wikipedia",
+        "shared_terms": [
+          "civil",
+          "south",
+          "forces",
+          "sudanese",
+          "abuses",
+          "between"
+        ],
+        "per_source_metrics": {
+          "en.wikipedia.org": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "en.wikipedia.org",
+            "summary": "en.wikipedia.org emphasizes governance; broad coverage with neutral language.",
+            "key_emphasis": "governance"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "The South Sudanese Civil War was a multi-sided civil war in South Sudan fought from 2013 to 2020, between forces of the government and opposition forces",
+              "source_url": "https://en.wikipedia.org/wiki/South_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "South Sudanese Civil War - Wikipedia",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "The civil war caused rampant human rights abuses, including forced displacement, ethnic massacres, and killings of journalists by various parties",
+              "source_url": "https://en.wikipedia.org/wiki/South_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "South Sudanese Civil War - Wikipedia",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "en.wikipedia.org": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "South Sudanese Civil War - Wikipedia",
+              "source": "web",
+              "url": "https://en.wikipedia.org/wiki/South_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "en.wikipedia.org",
+              "summary": "en.wikipedia.org emphasizes governance; broad coverage with neutral language.",
+              "key_emphasis": "governance"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "other",
+                "topic_percent": {
+                  "governance": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "other": {
+                "government": 1,
+                "opposition": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      },
+      {
+        "cluster_id": 9,
+        "size": 1,
+        "representative_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+        "shared_terms": [
+          "began",
+          "chief",
+          "civil",
+          "community",
+          "conflict",
+          "damaging"
+        ],
+        "per_source_metrics": {
+          "bbc.com": {
+            "omission_score": 0.0,
+            "sentiment_delta": 0.0,
+            "loaded_language_score": 0.0,
+            "source_diversity": 1,
+            "stance_toward": {
+              "government": 0.0,
+              "protesters": 0.0,
+              "foreign": 0.0
+            },
+            "censorship_radar_metric": 0.0
+          }
+        },
+        "angle_cards": [
+          {
+            "source": "bbc.com",
+            "summary": "bbc.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+            "key_emphasis": "foreign_actors, humanitarian"
+          }
+        ],
+        "why_flagged": "Sources differ in emphasis on: a limited set of topics Frequently omitted across sources: few common omissions Framing varies by topic presence rather than overt sentiment shifts.",
+        "provenance": {
+          "evidence": [
+            {
+              "fact_text": "The stain on the record of the international community is less visible, but no less damaging,&quot; UN human rights chief Volker T\u00fcrk said at an emergency meeting in Geneva on Friday",
+              "source_url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+              "sentence_index": 0,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            },
+            {
+              "fact_text": "Since the civil war began over two years ago, more than 150,000",
+              "source_url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+              "source_title": "Sudan conflict: Mass killings investigation gets green light from UN",
+              "sentence_index": 1,
+              "tool": "valyu_search",
+              "model": "deterministic_metrics_v1"
+            }
+          ]
+        },
+        "components": {
+          "censorship_radar_per_source": {
+            "bbc.com": 0.0
+          },
+          "articles_table": [
+            {
+              "title": "Sudan conflict: Mass killings investigation gets green light from UN",
+              "source": "web",
+              "url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+              "timestamp": null
+            }
+          ],
+          "source_summaries": [
+            {
+              "source": "bbc.com",
+              "summary": "bbc.com emphasizes foreign_actors, humanitarian; broad coverage with neutral language.",
+              "key_emphasis": "foreign_actors, humanitarian"
+            }
+          ],
+          "framing_vectors": {
+            "coverage_matrix_percent": [
+              {
+                "class": "international",
+                "topic_percent": {
+                  "foreign_actors": 100.0,
+                  "humanitarian": 100.0
+                }
+              }
+            ],
+            "blame_distribution": {
+              "international": {
+                "foreign": 1
+              }
+            }
+          },
+          "provenance_graph_link": null
+        }
+      }
+    ],
+    "version": 1,
+    "grandma_brief": "Topic: war in sudan What happened: - As criticism grows, is UAE ready to walk away from Sudan\u2019s RSF militia - Sudan\u2019s civil war between the regular army known as the Sudan Armed Forces and the paramilitary Rapid Support Forces continues unabated - That operation ended with the genocide of up to 300,000 people - \u201cWe don\u2019t have enough resources or funding to make even enough meals a day,\u201d said Mahmoud, the Darfur genocide survivor - While global attention remains fixed on wars elsewhere in the Middle East, Iran is quietly waging a shadow war in Sudan, where Tehran is emerging as a decisive backer of the increasingly Islamist military, the Sudanese Armed Forces - Since gaining independence in 1956, Sudan has endured chronic instability marked by 20 coup attempts, prolonged military rule, two civil wars, and the Darfur genocide Agreed across sources: - civil - sudanese - between - forces - sudan Contested or uncertain: - created - militia - criticism - described - crises - support - humanity - crimes - unabated - commit - regular - against Notes: Some information may remain unverified; treat single-source claims cautiously. \nAdditional independent confirmation pending for several operational claims. \nContext remains fluid; neutral language is used intentionally. \nMultiple sources align on core timeline while peripheral details vary. \nHumanitarian conditions described rely on initial field assessments. \nReported figures may adjust as situation stabilizes and verification advances. \nStakeholder perspectives are summarized without endorsing any position. \nGeographical references reflect initial field dispatches subject to refinement. \nLogistical constraints influence pace of humanitarian access and reporting cycles. \nCasualty indicators remain preliminary pending consolidated medical tallies. \nDiplomatic engagement status draws on openly stated multilateral communications. \nAdditional independent confirmation pending for several operational claims. \nContext remains fluid; neutral language is used intentionally. \nMultiple sources align on core timeline while peripheral details vary.",
+    "ingestion_summary": {
+      "counts_by_class": {
+        "international": 4,
+        "diaspora_blog": 3,
+        "other": 3
+      },
+      "missing_classes": [
+        "state_aligned"
+      ],
+      "total_results": 10,
+      "requests": 4,
+      "retries": 0,
+      "fallback_used": false,
+      "mirror_flags": [
+        {
+          "url": "https://www.theguardian.com/world/2025/nov/04/sudan-civil-war-spiralling-out-of-control-un-secretary-general-says?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://www.aljazeera.com/news/2025/10/31/war-in-sudan-october-round-up?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://www.theguardian.com/world/2025/oct/31/sudan-civil-war-el-fasher-explained?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://continent.substack.com/p/sudans-split-in-two-again-is-now?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://jessemarks.substack.com/p/chinas-arm-length-approach-to-sudan?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://holliesmckay.substack.com/p/irans-hidden-hand-in-sudan-proxy?action=share&utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023\u2013present)?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/South_Sudanese_Civil_War?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        },
+        {
+          "url": "https://www.bbc.com/news/articles/c70jd4elgwzo?utm_source=valyu.ai&utm_medium=referral",
+          "mirror_used": true
+        }
+      ],
+      "mirror_count": 10,
+      "total_cost_usd": 0.015
+    },
+    "observability": {
+      "calls": 5,
+      "by_name": {
+        "valyu_search": {
+          "count": 5,
+          "failures": 0,
+          "latencies_ms": [
+            744.17,
+            1759.41,
+            477.47,
+            555.26,
+            718.73
+          ],
+          "p50_ms": 718.73,
+          "avg_ms": 851.01,
+          "max_ms": 1759.41
+        }
+      },
+      "emissions_kg": null
+    }
+  }
+}

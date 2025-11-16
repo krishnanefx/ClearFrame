@@ -13,10 +13,15 @@ except Exception:
 _METRICS: List[Dict[str, Any]] = []
 _EMISSIONS: Optional[float] = None
 _TRACKER: Optional[EmissionsTracker] = None
+_API_REQUESTS: int = 0  # Track API requests for emissions calculation
+_LLM_CALLS: int = 0  # Track LLM calls for emissions calculation
 
 
 def start_emissions_tracker():
-    global _TRACKER
+    """Initialize emissions tracking."""
+    global _TRACKER, _API_REQUESTS, _LLM_CALLS
+    _API_REQUESTS = 0
+    _LLM_CALLS = 0
     if _CODECARBON_AVAILABLE and _TRACKER is None:
         try:
             _TRACKER = EmissionsTracker(measurement_interval=1, save_to_file=False)
@@ -26,14 +31,32 @@ def start_emissions_tracker():
 
 
 def stop_emissions_tracker():
-    global _TRACKER, _EMISSIONS
+    """Stop emissions tracking and calculate based on API requests and LLM calls (5g each)."""
+    global _TRACKER, _EMISSIONS, _API_REQUESTS, _LLM_CALLS
+    # Calculate emissions: 5g CO2e per API request + 5g per LLM call
+    total_calls = _API_REQUESTS + _LLM_CALLS
+    _EMISSIONS = (total_calls * 5.0) / 1000.0  # Convert grams to kg
+    
+    # Also try CodeCarbon if available (but prefer our calculation)
     if _TRACKER is not None:
         try:
-            _EMISSIONS = _TRACKER.stop()
+            _TRACKER.stop()
         except Exception:
-            _EMISSIONS = None
+            pass
         finally:
             _TRACKER = None
+
+
+def track_api_request():
+    """Increment API request counter for emissions calculation."""
+    global _API_REQUESTS
+    _API_REQUESTS += 1
+
+
+def track_llm_call():
+    """Increment LLM call counter for emissions calculation."""
+    global _LLM_CALLS
+    _LLM_CALLS += 1
 
 
 def instrument(name: str):
@@ -63,7 +86,15 @@ def instrument(name: str):
 
 
 def get_metrics() -> Dict[str, Any]:
-    agg: Dict[str, Any] = {"calls": len(_METRICS), "by_name": {}, "emissions_kg": _EMISSIONS}
+    agg: Dict[str, Any] = {
+        "calls": len(_METRICS), 
+        "by_name": {}, 
+        "emissions_kg": _EMISSIONS,
+        "api_requests": _API_REQUESTS,
+        "llm_calls": _LLM_CALLS,
+        "total_emissions_events": _API_REQUESTS + _LLM_CALLS,
+        "emissions_per_event_g": 5.0
+    }
     for m in _METRICS:
         n = m["name"]
         byn = agg["by_name"].setdefault(n, {"count": 0, "failures": 0, "latencies_ms": []})
@@ -88,10 +119,15 @@ __all__ = [
     "stop_emissions_tracker",
     "get_metrics",
     "reset_metrics",
+    "track_api_request",
+    "track_llm_call",
 ]
 
 
 def reset_metrics():
     """Clear collected metrics (for isolated benchmark runs)."""
-    global _METRICS
+    global _METRICS, _API_REQUESTS, _EMISSIONS, _LLM_CALLS
     _METRICS = []
+    _API_REQUESTS = 0
+    _LLM_CALLS = 0
+    _EMISSIONS = None

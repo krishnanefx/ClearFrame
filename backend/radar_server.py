@@ -9,9 +9,16 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import os
+import sys
+from pathlib import Path
+
+BACKEND_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BACKEND_DIR.parent
+sys.path.insert(0, str(BACKEND_DIR))
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # Reuse existing search + dashboard logic
-from basic_cli import run_valyu_search, fetch_with_category_coverage
+from .basic_cli import run_valyu_search, fetch_with_category_coverage
 from src.analysis.bias_metrics import build_dashboard_payload, generate_grandma_brief
 
 app = FastAPI(title="Censorship Radar API", version="1.0")
