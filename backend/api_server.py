@@ -7,6 +7,8 @@ Connects basic_cli.py backend with factflow-ui frontend
 import os
 import sys
 import logging
+import hashlib
+import json
 from pathlib import Path
 from typing import Dict, Any
 from flask import Flask, request, jsonify
@@ -40,6 +42,13 @@ from backend.basic_cli import (
     cluster_narratives,
     evidence_strength,
     detect_propaganda,
+    # Observability wrappers
+    start_trace,
+    end_trace,
+    add_span,
+    end_span,
+    SpanType,
+    SpanStatus,
 )
 from src.analysis.bias_metrics import (
     generate_grandma_brief,
@@ -58,6 +67,10 @@ CORS(app)  # Enable CORS for all routes
 
 # Load configuration
 config = Config()
+
+# Grandma brief cache directory
+CACHE_DIR = PROJECT_ROOT / "data" / "grandma_cache"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @app.route('/health', methods=['GET'])
@@ -112,9 +125,9 @@ def analyze_claim():
         
         logger.info(f"Fetching articles with coverage: total_cap={total_cap}, per_class_min={per_class_min}")
         covered_articles, ingestion_meta = fetch_with_category_coverage(
-            query, 
-            total_cap, 
-            per_class_min, 
+            query,
+            total_cap,
+            per_class_min,
             response_length
         )
         
@@ -207,8 +220,39 @@ def analyze_claim():
         stop_emissions_tracker()
         metrics = get_metrics()
         
-        # Generate grandma brief (300-500 word summary)
-        grandma_brief = generate_grandma_brief(covered_articles, query)
+        # Generate grandma brief (neutral, simple summary using LLM)
+        # Use cache to avoid redundant LLM calls for the same query
+        cache_key = hashlib.md5(query.lower().strip().encode()).hexdigest()
+        cache_file = CACHE_DIR / f"{cache_key}.json"
+        
+        if cache_file.exists():
+            # Load from cache
+            logger.info(f"Loading grandma brief from cache for query: {query}")
+            try:
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_data = json.load(f)
+                    grandma_brief = cached_data.get('brief', '')
+                    logger.info(f"✅ Cache hit! Saved LLM call.")
+            except Exception as e:
+                logger.warning(f"Cache read failed: {e}, regenerating...")
+                grandma_brief = generate_grandma_brief(covered_articles, query, llm)
+                # Save to cache
+                try:
+                    with open(cache_file, 'w', encoding='utf-8') as f:
+                        json.dump({'query': query, 'brief': grandma_brief}, f, indent=2)
+                except Exception as cache_err:
+                    logger.warning(f"Failed to cache grandma brief: {cache_err}")
+        else:
+            # Generate new brief and cache it
+            logger.info(f"Generating new grandma brief for query: {query}")
+            grandma_brief = generate_grandma_brief(covered_articles, query, llm)
+            # Save to cache
+            try:
+                with open(cache_file, 'w', encoding='utf-8') as f:
+                    json.dump({'query': query, 'brief': grandma_brief}, f, indent=2)
+                logger.info(f"✅ Cached grandma brief for future use")
+            except Exception as cache_err:
+                logger.warning(f"Failed to cache grandma brief: {cache_err}")
         
         # Build response
         result = {
@@ -223,6 +267,9 @@ def analyze_claim():
                 "total_latency_ms": metrics.get("total_latency_ms"),
                 "llm_calls": metrics.get("llm_calls", 0),
                 "api_calls": metrics.get("api_calls", 0),
+                # Bubble up derived costs/tokens if available
+                "cost_usd": ingestion_meta.get("total_cost_usd") if isinstance(ingestion_meta, dict) else None,
+                "token_usage": ingestion_meta.get("token_usage") if isinstance(ingestion_meta, dict) else None,
             }
         }
         

@@ -1,18 +1,18 @@
 {
-  "trace_id": "trace_1763290179.989281",
+  "trace_id": "trace_1763293395.285633",
   "query": "What are the latest developments in AI regulation?",
-  "start_time": "2025-11-16T10:49:39.989386+00:00",
-  "end_time": "2025-11-16T10:49:39.989406+00:00",
-  "total_duration_ms": 0.02,
+  "start_time": "2025-11-16T11:43:15.285747+00:00",
+  "end_time": "2025-11-16T11:43:15.285769+00:00",
+  "total_duration_ms": 0.022,
   "status": "success",
   "root_span": {
     "span_id": "span_0",
     "parent_id": null,
     "span_type": "agent",
     "name": "NewsAnalysisAgent",
-    "start_time": "2025-11-16T10:49:39.989392+00:00",
-    "end_time": "2025-11-16T10:49:39.989405+00:00",
-    "duration_ms": 0.013,
+    "start_time": "2025-11-16T11:43:15.285754+00:00",
+    "end_time": "2025-11-16T11:43:15.285768+00:00",
+    "duration_ms": 0.014,
     "status": "success",
     "inputs": {
       "query": "AI regulation"
@@ -28,8 +28,8 @@
         "parent_id": "span_0",
         "span_type": "tool",
         "name": "ValyuSearch",
-        "start_time": "2025-11-16T10:49:39.989397+00:00",
-        "end_time": "2025-11-16T10:49:39.989399+00:00",
+        "start_time": "2025-11-16T11:43:15.285759+00:00",
+        "end_time": "2025-11-16T11:43:15.285761+00:00",
         "duration_ms": 0.002,
         "status": "success",
         "inputs": {
@@ -40,7 +40,9 @@
           "articles": 5,
           "cost_usd": 0.0075
         },
-        "metadata": {},
+        "metadata": {
+          "cost_usd": 0.0075
+        },
         "error": null
       },
       {
@@ -48,8 +50,8 @@
         "parent_id": "span_0",
         "span_type": "llm",
         "name": "Claude-3.5-Sonnet",
-        "start_time": "2025-11-16T10:49:39.989401+00:00",
-        "end_time": "2025-11-16T10:49:39.989402+00:00",
+        "start_time": "2025-11-16T11:43:15.285764+00:00",
+        "end_time": "2025-11-16T11:43:15.285765+00:00",
         "duration_ms": 0.001,
         "status": "success",
         "inputs": {
@@ -66,9 +68,9 @@
         "parent_id": "span_0",
         "span_type": "tool",
         "name": "BiasDetector",
-        "start_time": "2025-11-16T10:49:39.989403+00:00",
-        "end_time": "2025-11-16T10:49:39.989404+00:00",
-        "duration_ms": 0.001,
+        "start_time": "2025-11-16T11:43:15.285766+00:00",
+        "end_time": "2025-11-16T11:43:15.285768+00:00",
+        "duration_ms": 0.002,
         "status": "error",
         "inputs": {
           "articles": 5
@@ -85,9 +87,9 @@
       "parent_id": null,
       "span_type": "agent",
       "name": "NewsAnalysisAgent",
-      "start_time": "2025-11-16T10:49:39.989392+00:00",
-      "end_time": "2025-11-16T10:49:39.989405+00:00",
-      "duration_ms": 0.013,
+      "start_time": "2025-11-16T11:43:15.285754+00:00",
+      "end_time": "2025-11-16T11:43:15.285768+00:00",
+      "duration_ms": 0.014,
       "status": "success",
       "inputs": {
         "query": "AI regulation"
@@ -103,8 +105,8 @@
           "parent_id": "span_0",
           "span_type": "tool",
           "name": "ValyuSearch",
-          "start_time": "2025-11-16T10:49:39.989397+00:00",
-          "end_time": "2025-11-16T10:49:39.989399+00:00",
+          "start_time": "2025-11-16T11:43:15.285759+00:00",
+          "end_time": "2025-11-16T11:43:15.285761+00:00",
           "duration_ms": 0.002,
           "status": "success",
           "inputs": {
@@ -115,7 +117,9 @@
             "articles": 5,
             "cost_usd": 0.0075
           },
-          "metadata": {},
+          "metadata": {
+            "cost_usd": 0.0075
+          },
           "error": null
         },
         {
@@ -123,8 +127,8 @@
           "parent_id": "span_0",
           "span_type": "llm",
           "name": "Claude-3.5-Sonnet",
-          "start_time": "2025-11-16T10:49:39.989401+00:00",
-          "end_time": "2025-11-16T10:49:39.989402+00:00",
+          "start_time": "2025-11-16T11:43:15.285764+00:00",
+          "end_time": "2025-11-16T11:43:15.285765+00:00",
           "duration_ms": 0.001,
           "status": "success",
           "inputs": {
@@ -141,9 +145,9 @@
           "parent_id": "span_0",
           "span_type": "tool",
           "name": "BiasDetector",
-          "start_time": "2025-11-16T10:49:39.989403+00:00",
-          "end_time": "2025-11-16T10:49:39.989404+00:00",
-          "duration_ms": 0.001,
+          "start_time": "2025-11-16T11:43:15.285766+00:00",
+          "end_time": "2025-11-16T11:43:15.285768+00:00",
+          "duration_ms": 0.002,
           "status": "error",
           "inputs": {
             "articles": 5
@@ -159,8 +163,8 @@
       "parent_id": "span_0",
       "span_type": "tool",
       "name": "ValyuSearch",
-      "start_time": "2025-11-16T10:49:39.989397+00:00",
-      "end_time": "2025-11-16T10:49:39.989399+00:00",
+      "start_time": "2025-11-16T11:43:15.285759+00:00",
+      "end_time": "2025-11-16T11:43:15.285761+00:00",
       "duration_ms": 0.002,
       "status": "success",
       "inputs": {
@@ -171,7 +175,9 @@
         "articles": 5,
         "cost_usd": 0.0075
       },
-      "metadata": {},
+      "metadata": {
+        "cost_usd": 0.0075
+      },
       "error": null
     },
     {
@@ -179,8 +185,8 @@
       "parent_id": "span_0",
       "span_type": "llm",
       "name": "Claude-3.5-Sonnet",
-      "start_time": "2025-11-16T10:49:39.989401+00:00",
-      "end_time": "2025-11-16T10:49:39.989402+00:00",
+      "start_time": "2025-11-16T11:43:15.285764+00:00",
+      "end_time": "2025-11-16T11:43:15.285765+00:00",
       "duration_ms": 0.001,
       "status": "success",
       "inputs": {
@@ -197,9 +203,9 @@
       "parent_id": "span_0",
       "span_type": "tool",
       "name": "BiasDetector",
-      "start_time": "2025-11-16T10:49:39.989403+00:00",
-      "end_time": "2025-11-16T10:49:39.989404+00:00",
-      "duration_ms": 0.001,
+      "start_time": "2025-11-16T11:43:15.285766+00:00",
+      "end_time": "2025-11-16T11:43:15.285768+00:00",
+      "duration_ms": 0.002,
       "status": "error",
       "inputs": {
         "articles": 5
@@ -211,6 +217,14 @@
   ],
   "metadata": {
     "langsmith_enabled": true,
-    "langchain_project": "default"
-  }
+    "langchain_project": "default",
+    "mode": null,
+    "tools": [],
+    "model": null,
+    "latency_ms": 0.022,
+    "success": true,
+    "cost_usd": 0.0075,
+    "error_type": "BiasDetector"
+  },
+  "tags": []
 }

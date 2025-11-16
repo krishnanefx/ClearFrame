@@ -87,6 +87,7 @@ class ExecutionTrace:
     root_span: Optional[ExecutionSpan] = None
     spans: List[ExecutionSpan] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    tags: List[str] = field(default_factory=list)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert trace to dictionary for JSON serialization."""
@@ -100,6 +101,7 @@ class ExecutionTrace:
             "root_span": self.root_span.to_dict() if self.root_span else None,
             "spans": [span.to_dict() for span in self.spans],
             "metadata": self.metadata,
+            "tags": self.tags,
         }
 
 
@@ -117,12 +119,22 @@ class TraceVisualizer:
         self.langsmith_enabled = langsmith_enabled
         self.current_trace: Optional[ExecutionTrace] = None
     
-    def start_trace(self, query: str, trace_id: Optional[str] = None) -> ExecutionTrace:
+    def start_trace(self, 
+                   query: str, 
+                   trace_id: Optional[str] = None,
+                   mode: Optional[str] = None,
+                   tools: Optional[List[str]] = None,
+                   model: Optional[str] = None,
+                   tags: Optional[List[str]] = None) -> ExecutionTrace:
         """Start a new execution trace.
         
         Args:
             query: The user query being traced
             trace_id: Optional trace ID (generated if not provided)
+            mode: Execution mode (e.g., pipeline, agent, structured)
+            tools: Tools used during the run
+            model: Model name
+            tags: Additional tags to help LangSmith grouping
             
         Returns:
             ExecutionTrace object
@@ -130,6 +142,17 @@ class TraceVisualizer:
         if trace_id is None:
             trace_id = f"trace_{datetime.now(timezone.utc).timestamp()}"
         
+        trace_tags = tags or []
+        if mode and f"mode:{mode}" not in trace_tags:
+            trace_tags.append(f"mode:{mode}")
+        if model and f"model:{model}" not in trace_tags:
+            trace_tags.append(f"model:{model}")
+        if tools:
+            for tool in tools:
+                tag = f"tool:{tool}"
+                if tag not in trace_tags:
+                    trace_tags.append(tag)
+
         self.current_trace = ExecutionTrace(
             trace_id=trace_id,
             query=query,
@@ -137,15 +160,27 @@ class TraceVisualizer:
             metadata={
                 "langsmith_enabled": self.langsmith_enabled,
                 "langchain_project": os.getenv("LANGCHAIN_PROJECT", "default"),
+                "mode": mode,
+                "tools": tools or [],
+                "model": model,
             }
+            ,
+            tags=trace_tags,
         )
         return self.current_trace
     
-    def end_trace(self, status: SpanStatus = SpanStatus.SUCCESS) -> Optional[ExecutionTrace]:
+    def end_trace(self, 
+                 status: SpanStatus = SpanStatus.SUCCESS, 
+                 error_type: Optional[str] = None,
+                 feedback_score: Optional[float] = None,
+                 feedback_notes: Optional[str] = None) -> Optional[ExecutionTrace]:
         """End the current trace.
         
         Args:
             status: Final status of the trace
+            error_type: Optional error type/category for filtering
+            feedback_score: Optional numeric feedback (e.g., 1-5) to push to LangSmith
+            feedback_notes: Optional free-form feedback summary
             
         Returns:
             Completed ExecutionTrace object
@@ -156,6 +191,52 @@ class TraceVisualizer:
                 delta = (self.current_trace.end_time - self.current_trace.start_time).total_seconds()
                 self.current_trace.total_duration_ms = delta * 1000
             self.current_trace.status = status
+            
+            # Attach run-level KPI metadata used by dashboards
+            self.current_trace.metadata["latency_ms"] = self.current_trace.total_duration_ms
+            self.current_trace.metadata["success"] = status == SpanStatus.SUCCESS
+            # Aggregate cost across spans if present
+            cost_spans = [
+                s.metadata.get("cost_usd")
+                for s in self.current_trace.spans
+                if isinstance(s.metadata, dict) and "cost_usd" in s.metadata
+            ]
+            if cost_spans:
+                self.current_trace.metadata["cost_usd"] = sum(
+                    c for c in cost_spans if c is not None
+                )
+            # Aggregate token usage across spans
+            token_fields = ["input_tokens", "output_tokens", "total_tokens"]
+            token_usage: Dict[str, float] = {}
+            for span in self.current_trace.spans:
+                tokens = None
+                if isinstance(span.metadata, dict):
+                    if isinstance(span.metadata.get("token_usage"), dict):
+                        tokens = span.metadata["token_usage"]
+                    else:
+                        tokens = {k: span.metadata.get(k) for k in token_fields}
+                if isinstance(tokens, dict):
+                    for k, v in tokens.items():
+                        if v is None:
+                            continue
+                        token_usage[k] = token_usage.get(k, 0) + float(v)
+            if token_usage:
+                self.current_trace.metadata["token_usage"] = token_usage
+            # Optional feedback, surfaced to LangSmith as metadata + tag
+            if feedback_score is not None:
+                self.current_trace.metadata["feedback_score"] = feedback_score
+                tag = f"feedback:{feedback_score}"
+                if tag not in self.current_trace.tags:
+                    self.current_trace.tags.append(tag)
+            if feedback_notes:
+                self.current_trace.metadata["feedback_notes"] = feedback_notes
+            # If error type not provided, derive from the last error span if present
+            if not error_type:
+                error_spans = [s for s in self.current_trace.spans if s.status == SpanStatus.ERROR or s.error]
+                if error_spans:
+                    error_type = error_spans[-1].name
+            if error_type:
+                self.current_trace.metadata["error_type"] = error_type
             return self.current_trace
         return None
     
@@ -216,6 +297,21 @@ class TraceVisualizer:
         span.status = status
         if outputs:
             span.outputs = outputs
+            # Surface common metrics on metadata for downstream aggregation
+            if isinstance(outputs, dict):
+                if "cost_usd" in outputs:
+                    span.metadata["cost_usd"] = outputs.get("cost_usd")
+                # Token usage keys (common LangChain/LangSmith patterns)
+                token_usage = outputs.get("token_usage") or outputs.get("tokens")
+                if isinstance(token_usage, dict):
+                    span.metadata["token_usage"] = token_usage
+                else:
+                    tf = {}
+                    for key in ("input_tokens", "output_tokens", "total_tokens"):
+                        if key in outputs:
+                            tf[key] = outputs[key]
+                    if tf:
+                        span.metadata["token_usage"] = tf
         if error:
             span.error = error
         return span
@@ -386,6 +482,7 @@ class TraceVisualizer:
             total_duration_ms=data.get("total_duration_ms"),
             status=SpanStatus(data["status"]),
             metadata=data.get("metadata", {}),
+            tags=data.get("tags", []),
         )
         
         return trace

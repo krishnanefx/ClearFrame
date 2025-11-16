@@ -43,6 +43,12 @@ class ObservabilityMetrics:
     average_cost_usd: float = 0.0
     failure_rate: float = 0.0
     uptime_percentage: float = 100.0
+    total_input_tokens: float = 0.0
+    total_output_tokens: float = 0.0
+    total_tokens: float = 0.0
+    average_tokens_per_trace: float = 0.0
+    average_feedback_score: Optional[float] = None
+    feedback_count: int = 0
     
     # Failure breakdown
     failures_by_category: Dict[str, int] = field(default_factory=dict)
@@ -78,6 +84,12 @@ class ObservabilityMetrics:
                 "average_cost_usd": round(self.average_cost_usd, 6),
                 "most_expensive_operations": self.most_expensive_operations[:5],
             },
+            "tokens": {
+                "total_input_tokens": round(self.total_input_tokens, 2),
+                "total_output_tokens": round(self.total_output_tokens, 2),
+                "total_tokens": round(self.total_tokens, 2),
+                "average_tokens_per_trace": round(self.average_tokens_per_trace, 2),
+            },
             "failures": {
                 "by_category": self.failures_by_category,
                 "by_severity": self.failures_by_severity,
@@ -85,6 +97,8 @@ class ObservabilityMetrics:
             "quality": {
                 "average_confidence": self.average_confidence,
                 "reasoning_quality_score": round(self.reasoning_quality_score, 2),
+                "average_feedback_score": round(self.average_feedback_score, 2) if self.average_feedback_score is not None else None,
+                "feedback_count": self.feedback_count,
             }
         }
 
@@ -164,10 +178,31 @@ class ObservabilityDashboard:
         
         # Cost metrics (from trace metadata if available)
         costs = []
+        token_fields = ["input_tokens", "output_tokens", "total_tokens"]
+        token_totals = {k: 0.0 for k in token_fields}
+        traces_with_tokens = 0
+        feedback_scores: List[float] = []
         for trace in self.traces:
             cost = trace.metadata.get("cost_usd")
             if cost:
                 costs.append(cost)
+            
+            # Token usage aggregation
+            token_usage = trace.metadata.get("token_usage", {})
+            if isinstance(token_usage, dict):
+                traces_with_tokens += 1
+                for k in token_fields:
+                    val = token_usage.get(k)
+                    if val is not None:
+                        token_totals[k] += float(val)
+            
+            # Feedback aggregation
+            feedback = trace.metadata.get("feedback_score")
+            if feedback is not None:
+                try:
+                    feedback_scores.append(float(feedback))
+                except (TypeError, ValueError):
+                    pass
         
         if costs:
             metrics.total_cost_usd = sum(costs)
@@ -181,6 +216,18 @@ class ObservabilityDashboard:
                 {"query": q, "cost_usd": c, "trace_id": tid}
                 for q, c, tid in trace_costs[:5]
             ]
+        
+        # Token totals and averages
+        metrics.total_input_tokens = token_totals["input_tokens"]
+        metrics.total_output_tokens = token_totals["output_tokens"]
+        metrics.total_tokens = token_totals["total_tokens"] or (token_totals["input_tokens"] + token_totals["output_tokens"])
+        if self.traces:
+            metrics.average_tokens_per_trace = metrics.total_tokens / len(self.traces)
+        
+        # Feedback average
+        metrics.feedback_count = len(feedback_scores)
+        if feedback_scores:
+            metrics.average_feedback_score = sum(feedback_scores) / len(feedback_scores)
         
         # Failure breakdown
         for failure in self.failures:
@@ -330,6 +377,22 @@ class ObservabilityDashboard:
             lines.append("COST:")
             lines.append(f"  Total Cost: ${metrics.total_cost_usd:.6f}")
             lines.append(f"  Average Cost/Query: ${metrics.average_cost_usd:.6f}")
+            lines.append("")
+        
+        # Tokens
+        if metrics.total_tokens > 0:
+            lines.append("TOKENS:")
+            lines.append(f"  Total Tokens: {metrics.total_tokens:.0f} (in {metrics.total_executions} traces)")
+            lines.append(f"  Input Tokens: {metrics.total_input_tokens:.0f}")
+            lines.append(f"  Output Tokens: {metrics.total_output_tokens:.0f}")
+            lines.append(f"  Avg Tokens/Trace: {metrics.average_tokens_per_trace:.1f}")
+            lines.append("")
+        
+        # Feedback
+        if metrics.feedback_count:
+            lines.append("FEEDBACK:")
+            lines.append(f"  Responses: {metrics.feedback_count}")
+            lines.append(f"  Avg Score: {metrics.average_feedback_score:.2f}")
             lines.append("")
         
         # Failures

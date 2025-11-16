@@ -38,6 +38,15 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 import logging
 
+from src.observability.trace_visualizer import (
+    SpanStatus,
+    SpanType,
+    add_span,
+    end_span,
+    end_trace,
+    start_trace,
+)
+
 BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BACKEND_DIR.parent
 
@@ -1568,160 +1577,209 @@ def main():
 
     sources = [s.strip() for s in args.sources.split(",")] if args.sources else None
 
-    # Start emissions tracking before expensive calls
-    start_emissions_tracker()
-    # Always do a search to show transparency and article list
-    search = run_valyu_search(
-        query=args.query,
-        sources=sources,
-        search_type=args.search_type,
-        max_results=args.max_results,
-        relevance_threshold=args.relevance_threshold,
-        max_price=args.max_price,
-        language=args.language if hasattr(args, 'language') else None,
-        region=args.region if hasattr(args, 'region') else None,
-        date_from=start_date,
-        date_to=end_date,
-        response_length=response_length,
-        fast_mode=fast_mode,
-        included_sources=included_sources,
-        excluded_sources=excluded_sources,
-        category=category,
-        country_code=country_code,
-        is_tool_call=is_tool_call,
+    # Start observability trace (LangSmith + local)
+    trace = start_trace(
+        query=query,
+        mode=args.mode,
+        tools=custom_tools,
+        model="claude-3-5-sonnet" if not args.fast_mode else "claude-3-5-haiku",
+        tags=["env:cli"],
     )
+    agent_span = add_span(SpanType.AGENT, "UnifiedDeterministicPipeline", inputs={"query": query})
 
-    if not search or not isinstance(search, dict):
-        print("\n⚠️  Search returned unexpected format. Attempting to convert...")
-        print(f"   Type: {type(search)}")
-        if hasattr(search, "model_dump"):
-            search = search.model_dump()
-            print("   ✅ Converted using model_dump()")
-        elif hasattr(search, "dict"):
-            search = search.dict()
-            print("   ✅ Converted using dict()")
-        else:
-            print(f"\n❌ Cannot convert search result to dict: {search}")
-            return
-
-    articles = search.get("results", [])
-
-    # Cost / metrics summary (if available)
-    total_cost = search.get("total_cost_dollars") or search.get("total_deduction_dollars")
-    total_pcm = search.get("total_deduction_pcm")
-    total_chars = search.get("total_characters") or search.get("total_characters_count")
-    if total_cost is not None and not args.json_only:
-        print("\n💰 Cost Summary:")
-        if total_pcm is not None:
-            print(f"  CPM Deduction: {total_pcm}")
-        print(f"  Total Cost (USD): {total_cost}")
-        if total_chars is not None:
-            print(f"  Characters Returned: {total_chars}")
-        print(f"  Results Returned: {search.get('results_returned', len(articles))}/{search.get('total_results', len(articles))}")
-    
-    # Handle empty results
-    if not articles:
-        # For radar/brief, do not early return; radar fetches coverage later,
-        # and brief can fallback to coverage-aware fetch to build a summary.
-        if args.mode in ["radar", "brief"]:
-            if not args.json_only:
-                print("\n⚠️  No articles from initial search; falling back to coverage fetch.")
-        else:
-            if not args.json_only:
-                print("\n⚠️  No articles found.")
-                if search.get("error"):
-                    print(f"   Error: {search['error']}")
-                print(f"   Query: {search.get('query', args.query)}")
-                print("\n💡 Try:")
-                print("   - Broader search terms")
-                print("   - Different sources or --search-type")
-                print("   - Removing --sources to search all")
-            return
-    
-    # Unified deterministic pipeline: coverage-aware fetch → cluster → metrics → JSON
-    per_class_min = max(1, min(3, args.max_results // 2))
-    total_cap = max(args.max_results, 9)
-    covered_articles, ingestion_meta = fetch_with_category_coverage(args.query, total_cap, per_class_min, response_length)
-    
-    if not args.json_only:
-        print(f"\n📊 Fetched {len(covered_articles)} articles across {len(ingestion_meta.get('counts_by_class', {}))} source categories")
-        print(f"   Source distribution: {ingestion_meta.get('counts_by_class', {})}")
-        if ingestion_meta.get('missing_classes'):
-            print(f"   ⚠️  Missing classes: {', '.join(ingestion_meta['missing_classes'])}")
-    
-    # Use the new per-article bias system with LLM integration
-    llm = get_chat_model()
-    
-    # Analyze bias for each article
-    bias_results = analyze_articles_bias(covered_articles)
-    
-    # Optionally enhance with LLM-based advanced analysis for top articles
-    # Note: Advanced analysis can be enabled by setting ENABLE_ADVANCED_ANALYSIS=true
-    enable_advanced = os.getenv('ENABLE_ADVANCED_ANALYSIS', 'false').lower() == 'true'
-    
-    if enable_advanced and not args.json_only:
-        print(f"\n🔍 Analyzing bias dimensions for {min(5, len(covered_articles))} top articles with LLM...")
-    
-    if enable_advanced:
-        for i, article in enumerate(covered_articles[:5]):
-            try:
-                advanced = analyze_bias_advanced(article, llm)
-                framing = detect_framing_techniques(article, llm)
-                power = analyze_power_dynamics(article)
-                
-                if i < len(bias_results['articles']):
-                    bias_results['articles'][i]['advanced_analysis'] = {
-                        **advanced,
-                        'framing_techniques': framing,
-                        'power_dynamics': power
-                    }
-            except Exception as e:
-                logger.warning(f"Advanced analysis failed for article {i}: {e}")
-    
-    # Add narrative comparison (skip for now to avoid LLM JSON issues)
-    # try:
-    #     narrative_comparison = compare_article_narratives(covered_articles, llm)
-    #     bias_results['narrative_comparison'] = narrative_comparison
-    # except Exception as e:
-    #     logger.warning(f"Narrative comparison failed: {e}")
-    
-    # Build unified payload
-    unified = {
-        "query": args.query,
-        "search_type": args.search_type,
-        "article_count": len(covered_articles),
-        "bias_analysis": bias_results,
-        "ingestion_summary": ingestion_meta
-    }
-
-    # Stop emissions tracker & optionally print metrics
-    stop_emissions_tracker()
-    if getattr(args, "metrics", False) and not args.json_only:
-        metrics = get_metrics()
-        print("\n📈 Instrumentation Metrics:")
-        if metrics.get("emissions_kg") is not None:
-            print(f"  Emissions (kg CO2e): {metrics['emissions_kg']:.6f}")
-        print(f"  Total Calls: {metrics['calls']}")
-        for name, data in metrics.get("by_name", {}).items():
-            print(f"  - {name}: count={data['count']} failures={data['failures']} avg={data['avg_ms']}ms p50={data['p50_ms']}ms max={data['max_ms']}ms")
-
-    # Attach observability snapshot into output
     try:
-        unified["observability"] = get_metrics()
-    except Exception:
-        pass
+        # Start emissions tracking before expensive calls
+        start_emissions_tracker()
+        # Always do a search to show transparency and article list
+        search_span = add_span(SpanType.TOOL, "ValyuSearch", parent_id=agent_span.span_id, inputs={"query": args.query})
+        search = run_valyu_search(
+            query=args.query,
+            sources=sources,
+            search_type=args.search_type,
+            max_results=args.max_results,
+            relevance_threshold=args.relevance_threshold,
+            max_price=args.max_price,
+            language=args.language if hasattr(args, 'language') else None,
+            region=args.region if hasattr(args, 'region') else None,
+            date_from=start_date,
+            date_to=end_date,
+            response_length=response_length,
+            fast_mode=fast_mode,
+            included_sources=included_sources,
+            excluded_sources=excluded_sources,
+            category=category,
+            country_code=country_code,
+            is_tool_call=is_tool_call,
+        )
+        end_span(
+            search_span,
+            SpanStatus.SUCCESS,
+            outputs=(
+                {
+                    "results": len(search.get("results", [])) if isinstance(search, dict) else None,
+                    "cost_usd": search.get("total_cost_dollars") if isinstance(search, dict) else None,
+                }
+                if isinstance(search, dict)
+                else None
+            ),
+        )
 
-    # Emit JSON (stdout or file)
-    out_json = json.dumps(unified, indent=2)
-    if args.get("output_file") if isinstance(args, dict) else getattr(args, "output_file", None):
+        if not search or not isinstance(search, dict):
+            print("\n⚠️  Search returned unexpected format. Attempting to convert...")
+            print(f"   Type: {type(search)}")
+            if hasattr(search, "model_dump"):
+                search = search.model_dump()
+                print("   ✅ Converted using model_dump()")
+            elif hasattr(search, "dict"):
+                search = search.dict()
+                print("   ✅ Converted using dict()")
+            else:
+                print(f"\n❌ Cannot convert search result to dict: {search}")
+                end_span(agent_span, SpanStatus.ERROR, error="search_format")
+                end_trace(SpanStatus.ERROR, error_type="search_format")
+                return
+
+        articles = search.get("results", [])
+
+        # Cost / metrics summary (if available)
+        total_cost = search.get("total_cost_dollars") or search.get("total_deduction_dollars")
+        total_pcm = search.get("total_deduction_pcm")
+        total_chars = search.get("total_characters") or search.get("total_characters_count")
+        if total_cost is not None and not args.json_only:
+            print("\n💰 Cost Summary:")
+            if total_pcm is not None:
+                print(f"  CPM Deduction: {total_pcm}")
+            print(f"  Total Cost (USD): {total_cost}")
+            if total_chars is not None:
+                print(f"  Characters Returned: {total_chars}")
+            print(f"  Results Returned: {search.get('results_returned', len(articles))}/{search.get('total_results', len(articles))}")
+        
+        # Handle empty results
+        if not articles:
+            # For radar/brief, do not early return; radar fetches coverage later,
+            # and brief can fallback to coverage-aware fetch to build a summary.
+            if args.mode in ["radar", "brief"]:
+                if not args.json_only:
+                    print("\n⚠️  No articles from initial search; falling back to coverage fetch.")
+            else:
+                if not args.json_only:
+                    print("\n⚠️  No articles found.")
+                    if search.get("error"):
+                        print(f"   Error: {search['error']}")
+                    print(f"   Query: {search.get('query', args.query)}")
+                    print("\n💡 Try:")
+                    print("   - Broader search terms")
+                    print("   - Different sources or --search-type")
+                    print("   - Removing --sources to search all")
+                end_span(agent_span, SpanStatus.ERROR, error="no_articles")
+                end_trace(SpanStatus.ERROR, error_type="no_articles")
+                return
+        
+        # Unified deterministic pipeline: coverage-aware fetch → cluster → metrics → JSON
+        per_class_min = max(1, min(3, args.max_results // 2))
+        total_cap = max(args.max_results, 9)
+        covered_articles, ingestion_meta = fetch_with_category_coverage(args.query, total_cap, per_class_min, response_length)
+        
+        if not args.json_only:
+            print(f"\n📊 Fetched {len(covered_articles)} articles across {len(ingestion_meta.get('counts_by_class', {}))} source categories")
+            print(f"   Source distribution: {ingestion_meta.get('counts_by_class', {})}")
+            if ingestion_meta.get('missing_classes'):
+                print(f"   ⚠️  Missing classes: {', '.join(ingestion_meta['missing_classes'])}")
+    
+        # Use the new per-article bias system with LLM integration
+        llm = get_chat_model()
+        
+        # Analyze bias for each article
+        bias_results = analyze_articles_bias(covered_articles)
+        
+        # Optionally enhance with LLM-based advanced analysis for top articles
+        # Note: Advanced analysis can be enabled by setting ENABLE_ADVANCED_ANALYSIS=true
+        enable_advanced = os.getenv('ENABLE_ADVANCED_ANALYSIS', 'false').lower() == 'true'
+        
+        if enable_advanced and not args.json_only:
+            print(f"\n🔍 Analyzing bias dimensions for {min(5, len(covered_articles))} top articles with LLM...")
+        
+        if enable_advanced:
+            for i, article in enumerate(covered_articles[:5]):
+                try:
+                    advanced = analyze_bias_advanced(article, llm)
+                    framing = detect_framing_techniques(article, llm)
+                    power = analyze_power_dynamics(article)
+                    
+                    if i < len(bias_results['articles']):
+                        bias_results['articles'][i]['advanced_analysis'] = {
+                            **advanced,
+                            'framing_techniques': framing,
+                            'power_dynamics': power
+                        }
+                except Exception as e:
+                    logger.warning(f"Advanced analysis failed for article {i}: {e}")
+        
+        # Add narrative comparison (skip for now to avoid LLM JSON issues)
+        # try:
+        #     narrative_comparison = compare_article_narratives(covered_articles, llm)
+        #     bias_results['narrative_comparison'] = narrative_comparison
+        # except Exception as e:
+        #     logger.warning(f"Narrative comparison failed: {e}")
+        
+        # Build unified payload
+        unified = {
+            "query": args.query,
+            "search_type": args.search_type,
+            "article_count": len(covered_articles),
+            "bias_analysis": bias_results,
+            "ingestion_summary": ingestion_meta
+        }
+
+        # Stop emissions tracker & optionally print metrics
+        stop_emissions_tracker()
+        if getattr(args, "metrics", False) and not args.json_only:
+            metrics = get_metrics()
+            print("\n📈 Instrumentation Metrics:")
+            if metrics.get("emissions_kg") is not None:
+                print(f"  Emissions (kg CO2e): {metrics['emissions_kg']:.6f}")
+            print(f"  Total Calls: {metrics['calls']}")
+            for name, data in metrics.get("by_name", {}).items():
+                print(f"  - {name}: count={data['count']} failures={data['failures']} avg={data['avg_ms']}ms p50={data['p50_ms']}ms max={data['max_ms']}ms")
+
+        # Attach observability snapshot into output
         try:
-            with open(args.output_file, 'w') as f:
-                f.write(out_json)
-        except Exception as e:
-            print(json.dumps({"error":"file_write_failed","detail":str(e),"payload":unified}, indent=2))
-    else:
-        print(out_json)
-    return
+            unified["observability"] = get_metrics()
+        except Exception:
+            pass
+
+        # Emit JSON (stdout or file)
+        out_json = json.dumps(unified, indent=2)
+        if args.get("output_file") if isinstance(args, dict) else getattr(args, "output_file", None):
+            try:
+                with open(args.output_file, 'w') as f:
+                    f.write(out_json)
+            except Exception as e:
+                print(json.dumps({"error":"file_write_failed","detail":str(e),"payload":unified}, indent=2))
+        else:
+            print(out_json)
+        
+        # Close spans and trace
+        end_span(
+            agent_span,
+            SpanStatus.SUCCESS,
+            outputs={
+                "article_count": len(covered_articles),
+                "cost_usd": total_cost,
+                "token_usage": unified.get("observability", {}).get("token_usage") if isinstance(unified.get("observability"), dict) else None,
+            }
+        )
+        end_trace(SpanStatus.SUCCESS)
+        return
+
+    except Exception as e:
+        # Best-effort cleanup for tracing on failure
+        try:
+            end_span(agent_span, SpanStatus.ERROR, error=str(e))
+            end_trace(SpanStatus.ERROR, error_type=type(e).__name__)
+        except Exception:
+            pass
+        raise
 
 
 if __name__ == "__main__":

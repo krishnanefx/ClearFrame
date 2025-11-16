@@ -66,8 +66,19 @@ class ArticleBiasProfile:
         return {self._stem_word(t) for t in tokens}
     
     def analyze(self) -> Dict[str, Any]:
-        """Run complete bias analysis on the article."""
-        self._analyze_political_lean()
+        """Run complete bias analysis on the article using enhanced detection."""
+        # Use enhanced political lean detection
+        enhanced_lean = detect_political_lean_enhanced(
+            self.text, 
+            self.source, 
+            self.title, 
+            self.url
+        )
+        
+        # Extract enhanced metrics
+        self.political_lean_score = enhanced_lean["lean_score"]
+        
+        # Still run original methods for other dimensions
         self._analyze_emotional_manipulation()
         self._analyze_sensationalism()
         self._analyze_propaganda()
@@ -77,7 +88,19 @@ class ArticleBiasProfile:
         self._classify_bias_category()
         self._classify_source()
         
-        return self.to_dict()
+        # Add enhanced analysis to output
+        result = self.to_dict()
+        result["enhanced_analysis"] = {
+            "content_type": enhanced_lean.get("content_type"),
+            "topic_category": enhanced_lean.get("topic_category"),
+            "sentiment_analysis": enhanced_lean.get("detailed_analysis", {}).get("sentiment", {}),
+            "framing_analysis": enhanced_lean.get("detailed_analysis", {}).get("framing", {}),
+            "keyword_analysis": enhanced_lean.get("detailed_analysis", {}).get("keywords", {}),
+            "political_lean_confidence": enhanced_lean.get("confidence", 0.0),
+            "lean_contributing_factors": enhanced_lean.get("contributing_factors", {})
+        }
+        
+        return result
     
     def _analyze_political_lean(self):
         """Detect political lean through keyword analysis and framing."""
@@ -436,17 +459,17 @@ class ArticleBiasProfile:
         """Classify overall bias category."""
         score = self.political_lean_score
         
-        if score < -60:
+        if score < -40:
             self.bias_category = "far_left"
-        elif score < -25:
+        elif score < -15:
             self.bias_category = "left"
-        elif score < -10:
+        elif score < -5:
             self.bias_category = "center_left"
-        elif score <= 10:
+        elif score <= 5:
             self.bias_category = "neutral"
-        elif score <= 25:
+        elif score <= 15:
             self.bias_category = "center_right"
-        elif score <= 60:
+        elif score <= 40:
             self.bias_category = "right"
         else:
             self.bias_category = "far_right"
@@ -507,15 +530,16 @@ class ArticleBiasProfile:
         Calculate overall bias score in range [-50, 50].
         Negative scores lean left, positive scores lean right, 0 is neutral.
         """
-        lean_direction = max(-1.0, min(1.0, self.political_lean_score / 70.0))
+        # Amplify political lean influence for better differentiation
+        lean_direction = max(-1.0, min(1.0, self.political_lean_score / 50.0))
         bias_strength = (
-            abs(self.political_lean_score) * 0.25 +
+            abs(self.political_lean_score) * 0.4 +
             self.emotional_manipulation_score * 0.2 +
             self.sensationalism_score * 0.15 +
-            self.propaganda_score * 0.25 +
-            (100 - self.factual_language_score) * 0.15
+            self.propaganda_score * 0.15 +
+            (100 - self.factual_language_score) * 0.1
         )
-        normalized_strength = min(1.0, bias_strength / 100.0)
+        normalized_strength = min(1.0, bias_strength / 80.0)  # Lower denominator for more sensitivity
         return round(normalized_strength * 50 * lean_direction, 2)
     
     def to_dict(self) -> Dict[str, Any]:
@@ -628,9 +652,9 @@ def _compute_aggregate_stats(analyses: List[Dict[str, Any]]) -> Dict[str, Any]:
             "top_techniques": dict(technique_counts.most_common(5))
         },
         "coverage_assessment": {
-            "left_leaning_articles": sum(1 for s in political_leans if s < -10),
-            "neutral_articles": sum(1 for s in political_leans if -10 <= s <= 10),
-            "right_leaning_articles": sum(1 for s in political_leans if s > 10),
+            "left_leaning_articles": sum(1 for s in political_leans if s < -5),
+            "neutral_articles": sum(1 for s in political_leans if -5 <= s <= 5),
+            "right_leaning_articles": sum(1 for s in political_leans if s > 5),
             "high_credibility_count": credibility_counts.get('high', 0) + credibility_counts.get('medium-high', 0),
             "low_credibility_count": credibility_counts.get('low', 0) + credibility_counts.get('unknown', 0)
         }
@@ -865,53 +889,618 @@ def generate_source_angle_cards(articles: List[Dict[str, Any]]) -> List[Dict[str
     return sorted(cards, key=lambda c: (c["source_class"], c.get("source", ""), c.get("summary", "")))
 
 
-def generate_grandma_brief(articles: List[Dict[str, Any]], query: str = "this topic") -> str:
+# ============================================================================
+# ENHANCED BIAS DETECTION FEATURES
+# ============================================================================
+
+# Sentiment Analysis with TextBlob
+try:
+    from textblob import TextBlob
+    TEXTBLOB_AVAILABLE = True
+except ImportError:
+    TEXTBLOB_AVAILABLE = False
+    logger.warning("TextBlob not available - install with: pip install textblob")
+
+
+def _stem_word(word: str) -> str:
+    """Lightweight stemmer to reduce inflections without external dependencies."""
+    w = word.lower().strip(".,:;!?\"'()[]{}")
+    for suffix in ["ing", "ers", "er", "ies", "ied", "ed", "s"]:
+        if w.endswith(suffix) and len(w) - len(suffix) >= 3:
+            return w[: -len(suffix)]
+    return w
+
+
+def _build_stemmed_tokens(text: str) -> Set[str]:
+    """Build set of stemmed tokens for robust keyword matching."""
+    tokens = re.findall(r"[A-Za-z][A-Za-z\-']+", text.lower())
+    return {_stem_word(t) for t in tokens}
+
+
+def analyze_sentiment(text: str) -> Dict[str, Any]:
     """
-    Produce a deterministic, plain-English brief in the 300-500 word range.
+    Analyze sentiment using TextBlob with enhanced emotional language detection.
+    
+    Returns:
+        Dict with polarity, subjectivity, emotional_categories, and intensity_modifiers
     """
-    radar = compute_censorship_radar(articles)
-    omissions = cross_class_omissions(radar.get("bias_vectors", {}))
-    entity = compute_entity_stance(articles, radar.get("bias_vectors", {}))
+    if not TEXTBLOB_AVAILABLE:
+        return {
+            "polarity": 0.0,
+            "subjectivity": 0.0,
+            "sentiment_label": "neutral",
+            "emotional_categories": {},
+            "intensity_modifiers": {},
+            "textblob_available": False
+        }
+    
+    try:
+        blob = TextBlob(text)
+        polarity = blob.sentiment.polarity  # -1 to 1
+        subjectivity = blob.sentiment.subjectivity  # 0 to 1
+        
+        # Emotional language categories
+        emotional_keywords = {
+            "anger": ["angry", "furious", "outraged", "enraged", "livid", "mad", "infuriated"],
+            "fear": ["afraid", "scared", "terrified", "frightened", "panic", "anxious", "worried"],
+            "joy": ["happy", "joyful", "delighted", "pleased", "excited", "thrilled", "ecstatic"],
+            "sadness": ["sad", "depressed", "miserable", "devastated", "heartbroken", "grief"],
+            "disgust": ["disgusting", "revolting", "repulsive", "vile", "nauseating"],
+            "surprise": ["shocked", "astonished", "amazed", "stunned", "astounded"]
+        }
+        
+        text_lower = text.lower()
+        emotional_categories = {}
+        for emotion, keywords in emotional_keywords.items():
+            found = [kw for kw in keywords if kw in text_lower]
+            if found:
+                emotional_categories[emotion] = found
+        
+        # Intensity modifiers
+        intensity_modifiers = {
+            "amplifiers": ["very", "extremely", "incredibly", "absolutely", "completely", "totally"],
+            "diminishers": ["somewhat", "slightly", "barely", "hardly", "a bit", "kind of"]
+        }
+        
+        intensity_found = {}
+        for modifier_type, modifiers in intensity_modifiers.items():
+            found = [mod for mod in modifiers if mod in text_lower]
+            if found:
+                intensity_found[modifier_type] = found
+        
+        # Sentiment label
+        if polarity > 0.3:
+            sentiment_label = "positive"
+        elif polarity < -0.3:
+            sentiment_label = "negative"
+        else:
+            sentiment_label = "neutral"
+        
+        return {
+            "polarity": round(polarity, 3),
+            "subjectivity": round(subjectivity, 3),
+            "sentiment_label": sentiment_label,
+            "emotional_categories": emotional_categories,
+            "intensity_modifiers": intensity_found,
+            "textblob_available": True
+        }
+    except Exception as e:
+        logger.error(f"Sentiment analysis failed: {e}")
+        return {
+            "polarity": 0.0,
+            "subjectivity": 0.0,
+            "sentiment_label": "neutral",
+            "emotional_categories": {},
+            "intensity_modifiers": {},
+            "error": str(e)
+        }
 
-    parts: List[str] = []
-    parts.append(f"The news coverage about {query} comes from {len(articles)} articles across multiple types of sources.")
-    parts.append(f"The system groups sources into international outlets, state-aligned channels, diaspora blogs, and independent reporting.")
-    parts.append(f"We look for common topics such as humanitarian needs, military activity, diplomacy, stability, governance, protests, and the economy.")
-    parts.append(f"For this query we saw the following topics mentioned: {', '.join(radar.get('union_topics', []) or ['general'])}.")
-    parts.append(f"Censorship scale is estimated at {radar.get('scale_of_censorship', 0)} out of 100, rated as {radar.get('severity', 'low')} severity.")
 
-    if omissions.get("by_class"):
-        for cls, info in omissions["by_class"].items():
-            missing = info.get("missing_topics", [])
-            covered = info.get("covered_topics", [])
-            parts.append(f"{cls} sources cover {', '.join(covered) if covered else 'general themes'} but miss {', '.join(missing) if missing else 'no major topics'}.")
-
-    stance_info = entity.get("entity_stance", {})
-    if stance_info:
-        for cls, data in stance_info.items():
-            avg = data.get("average_per_article", {})
-            parts.append(
-                f"{cls} sources mention government actors about {avg.get('government', 0)} times per article, "
-                f"protesters {avg.get('protesters', 0)}, and foreign or international bodies {avg.get('foreign', 0)}."
-            )
-
-    parts.append("Practical tips: compare at least one state-aligned source with an international outlet and a grassroots blog. ")
-    parts.append("Look for diplomatic details, humanitarian numbers, and whether casualty figures are attributed to independent monitors.")
-    parts.append("When a perspective is missing, search for local eyewitnesses or NGO updates to balance the story.")
-
-    brief = " ".join(parts)
-    # Pad deterministically to stay within 300-500 words
-    filler_sentences = [
-        "This summary focuses on clarity instead of jargon so it works for any reader.",
-        "Each sentence is written to stand on its own and avoid speculative claims.",
-        "Numbers and actors are repeated to make the report easier to follow.",
+def detect_content_type(text: str, title: str = "", url: str = "") -> str:
+    """
+    Detect if content is news, opinion, analysis, blog, or social media.
+    
+    Returns:
+        'news', 'opinion', 'analysis', 'blog', 'social', or 'other'
+    """
+    text_lower = text.lower()
+    title_lower = title.lower()
+    url_lower = url.lower()
+    
+    # Opinion indicators
+    opinion_indicators = [
+        'opinion', 'editorial', 'commentary', 'column', 'op-ed', 'oped',
+        'perspective', 'viewpoint', 'take', 'think', 'believe',
+        'i think', 'i believe', 'in my view', 'my take', 'personally',
+        'should', 'must', 'ought to', 'need to', 'have to',
+        'outrageous', 'disgraceful', 'shameful', 'scandalous', 'unacceptable',
     ]
-    while len(brief.split()) < 320:
-        brief += " " + filler_sentences[len(brief.split()) % len(filler_sentences)]
-    return " ".join(brief.split()[:480])  # Safety cap below 500 words
+    
+    # Analysis indicators
+    analysis_indicators = [
+        'analysis', 'explained', 'explainer', 'background', 'context',
+        'deep dive', 'breakdown', 'examination', 'assessment', 'evaluation',
+        'overview', 'summary', 'review', 'critique', 'study shows',
+        'research suggests', 'data indicates', 'according to experts',
+    ]
+    
+    # Blog/social indicators
+    blog_indicators = [
+        'medium.com', 'substack.com', 'blogspot.com', 'wordpress.com',
+        'personal blog', 'my thoughts', 'sharing', 'experience',
+        'story', 'journey', 'reflection', 'diary',
+    ]
+    
+    social_indicators = [
+        'twitter.com', 'facebook.com', 'instagram.com', 'tiktok.com',
+        'linkedin.com', 'reddit.com', 't.co', 'thread', 'tweet',
+    ]
+    
+    # URL-based detection
+    if any(domain in url_lower for domain in ['medium.com', 'substack.com']):
+        return 'blog'
+    if any(domain in url_lower for domain in ['twitter.com', 'facebook.com', 'instagram.com', 'tiktok.com', 'reddit.com']):
+        return 'social'
+    
+    # Content-based detection
+    opinion_score = sum(1 for indicator in opinion_indicators if indicator in text_lower or indicator in title_lower)
+    analysis_score = sum(1 for indicator in analysis_indicators if indicator in text_lower or indicator in title_lower)
+    blog_score = sum(1 for indicator in blog_indicators if indicator in text_lower or indicator in title_lower)
+    social_score = sum(1 for indicator in social_indicators if indicator in text_lower or indicator in title_lower)
+    
+    max_score = max(opinion_score, analysis_score, blog_score, social_score)
+    
+    if max_score == 0:
+        return 'news'  # Default to news if no indicators found
+    
+    if opinion_score == max_score and opinion_score >= 2:
+        return 'opinion'
+    elif analysis_score == max_score and analysis_score >= 2:
+        return 'analysis'
+    elif blog_score == max_score:
+        return 'blog'
+    elif social_score == max_score:
+        return 'social'
+    else:
+        return 'news'
 
 
-def build_dashboard_payload(articles: List[Dict[str, Any]], query: str = "news topic") -> Dict[str, Any]:
+def detect_advanced_framing(text: str, topic: str = "") -> Dict[str, Any]:
+    """
+    Advanced framing detection with 8 framing categories and balance scoring.
+    
+    Returns:
+        Dict with framing_scores, dominant_frame, framing_diversity, and balance_score
+    """
+    text_lower = text.lower()
+    
+    # 8 Framing categories with patterns and context
+    framing_categories = {
+        "victim_framing": {
+            "patterns": [
+                "victims", "sufferers", "innocent", "helpless", "vulnerable",
+                "oppressed", "marginalized", "disadvantaged", "persecuted",
+                "targeted", "bullied", "exploited", "abused",
+            ],
+            "context": ["human rights", "social justice", "protection", "aid"]
+        },
+        
+        "threat_framing": {
+            "patterns": [
+                "threat", "danger", "risk", "menace", "crisis", "emergency",
+                "attack", "assault", "invasion", "siege", "besieged", "under attack",
+                "existential threat", "grave danger", "imminent risk",
+            ],
+            "context": ["security", "defense", "protection", "national interest"]
+        },
+        
+        "hero_framing": {
+            "patterns": [
+                "heroes", "brave", "courageous", "valiant", "gallant",
+                "champions", "defenders", "protectors", "guardians", "saviors",
+                "rescuers", "liberators", "freedom fighters",
+            ],
+            "context": ["military", "police", "activists", "leaders"]
+        },
+        
+        "villain_framing": {
+            "patterns": [
+                "villains", "criminals", "terrorists", "extremists", "radicals",
+                "aggressors", "invaders", "occupiers", "oppressors", "tyrants",
+                "dictators", "regimes", "enemies", "adversaries",
+            ],
+            "context": ["conflict", "war", "politics", "crime"]
+        },
+        
+        "systemic_framing": {
+            "patterns": [
+                "systemic", "structural", "institutional", "system-wide",
+                "entrenched", "deep-rooted", "fundamental", "core problem",
+                "root cause", "underlying issue", "broader context",
+            ],
+            "context": ["policy", "society", "economy", "justice"]
+        },
+        
+        "individual_framing": {
+            "patterns": [
+                "personal responsibility", "individual choice", "personal decision",
+                "self-reliance", "individual liberty", "personal freedom",
+                "character", "morality", "values", "integrity",
+            ],
+            "context": ["ethics", "behavior", "leadership", "success"]
+        },
+        
+        "economic_framing": {
+            "patterns": [
+                "economic impact", "financial cost", "budget", "taxpayer money",
+                "fiscal responsibility", "economic growth", "prosperity",
+                "wealth creation", "job creation", "economic freedom",
+            ],
+            "context": ["policy", "government", "business", "finance"]
+        },
+        
+        "moral_framing": {
+            "patterns": [
+                "moral", "ethical", "righteous", "virtuous", "corrupt",
+                "immoral", "unethical", "decadent", "depraved", "noble",
+                "honorable", "dishonorable", "integrity", "character",
+            ],
+            "context": ["politics", "society", "religion", "values"]
+        },
+    }
+    
+    framing_scores = {}
+    
+    for frame_name, frame_data in framing_categories.items():
+        pattern_matches = sum(1 for pattern in frame_data["patterns"] if pattern in text_lower)
+        context_matches = sum(1 for ctx in frame_data["context"] if ctx in text_lower)
+        framing_scores[frame_name] = pattern_matches + (context_matches * 0.5)
+    
+    # Dominant framing
+    dominant_frame = max(framing_scores, key=framing_scores.get)
+    dominant_score = framing_scores[dominant_frame]
+    
+    # Framing diversity (how many different frames are used)
+    active_frames = [f for f, s in framing_scores.items() if s > 0]
+    framing_diversity = len(active_frames)
+    
+    # Framing balance (opposing frames present?)
+    opposing_pairs = [
+        ("victim_framing", "villain_framing"),
+        ("threat_framing", "hero_framing"),
+        ("systemic_framing", "individual_framing"),
+        ("economic_framing", "moral_framing"),
+    ]
+    
+    balanced_pairs = sum(1 for pair in opposing_pairs 
+                        if framing_scores.get(pair[0], 0) > 0 and framing_scores.get(pair[1], 0) > 0)
+    
+    return {
+        "framing_scores": {k: round(v, 2) for k, v in framing_scores.items()},
+        "dominant_frame": dominant_frame if dominant_score > 0 else "neutral",
+        "dominant_score": round(dominant_score, 2),
+        "framing_diversity": framing_diversity,
+        "balanced_pairs": balanced_pairs,
+        "framing_balance_score": round(balanced_pairs / len(opposing_pairs), 2) if opposing_pairs else 0,
+    }
+
+
+def analyze_keywords_with_context(text: str, topic: str = "general") -> Dict[str, Any]:
+    """
+    Context-aware keyword analysis with topic-specific keywords and weighted scoring.
+    
+    Returns:
+        Dict with keyword_analysis, left/right totals, balance, and confidence
+    """
+    text_lower = text.lower()
+    
+    # Topic-specific keyword sets with 3 intensity levels
+    context_keywords = {
+        "politics": {
+            "liberal": {
+                "core": ["progressive", "liberal", "left-wing", "democratic party"],
+                "context": ["social justice", "equality", "reform", "change"],
+                "intensity": ["radical", "extreme", "far-left", "socialist"]
+            },
+            "conservative": {
+                "core": ["conservative", "right-wing", "republican party", "traditional"],
+                "context": ["law and order", "national security", "family values"],
+                "intensity": ["extreme", "far-right", "alt-right", "nationalist"]
+            }
+        },
+        
+        "israel_palestine": {
+            "pro_palestinian": {
+                "core": ["palestinian", "gaza", "west bank", "occupation"],
+                "context": ["human rights", "international law", "ceasefire"],
+                "intensity": ["apartheid", "ethnic cleansing", "genocide"]
+            },
+            "pro_israeli": {
+                "core": ["israel", "idf", "hamas", "hezbollah"],
+                "context": ["security", "defense", "anti-semitism"],
+                "intensity": ["existential threat", "right to exist", "self-defense"]
+            }
+        },
+        
+        "climate": {
+            "activist": {
+                "core": ["climate crisis", "global warming", "fossil fuels"],
+                "context": ["renewable energy", "carbon emissions"],
+                "intensity": ["existential threat", "climate emergency"]
+            },
+            "skeptical": {
+                "core": ["climate change", "natural cycles"],
+                "context": ["economic impact", "energy independence"],
+                "intensity": ["hoax", "alarmist", "overstated"]
+            }
+        }
+    }
+    
+    # Get relevant keyword set based on topic
+    topic_keywords = context_keywords.get(topic, {})
+    
+    if not topic_keywords:
+        # Default to general political keywords
+        topic_keywords = context_keywords.get("politics", {})
+    
+    keyword_analysis = {}
+    
+    for side, categories in topic_keywords.items():
+        core_count = sum(1 for kw in categories["core"] if kw in text_lower)
+        context_count = sum(1 for kw in categories["context"] if kw in text_lower)
+        intensity_count = sum(1 for kw in categories["intensity"] if kw in text_lower)
+        
+        # Weighted scoring: intensity keywords count 3x
+        total_score = core_count + context_count + (intensity_count * 3)
+        
+        keyword_analysis[side] = {
+            "core_count": core_count,
+            "context_count": context_count,
+            "intensity_count": intensity_count,
+            "total_score": total_score
+        }
+    
+    # Overall analysis
+    left_score = sum(v["total_score"] for k, v in keyword_analysis.items() 
+                     if k in ["liberal", "pro_palestinian", "activist"])
+    right_score = sum(v["total_score"] for k, v in keyword_analysis.items() 
+                      if k in ["conservative", "pro_israeli", "skeptical"])
+    
+    total_keywords = left_score + right_score
+    keyword_confidence = min(1.0, total_keywords / 10.0) if total_keywords > 0 else 0.0
+    
+    return {
+        "keyword_analysis": keyword_analysis,
+        "left_keywords_total": left_score,
+        "right_keywords_total": right_score,
+        "keyword_balance": left_score - right_score,
+        "keyword_confidence": round(keyword_confidence, 2),
+    }
+
+
+def detect_topic_category(text: str) -> str:
+    """
+    Detect the topic category of the text.
+    
+    Returns:
+        Topic category: 'politics', 'entertainment', 'sports', 'tech', 'business', 'science', 'general'
+    """
+    text_lower = text.lower()
+    
+    topic_keywords = {
+        'politics': ['election', 'president', 'congress', 'senate', 'governor', 'policy', 'legislation'],
+        'entertainment': ['movie', 'film', 'actor', 'music', 'celebrity', 'hollywood'],
+        'sports': ['game', 'player', 'team', 'season', 'championship', 'league'],
+        'tech': ['technology', 'software', 'app', 'ai', 'startup', 'silicon valley'],
+        'business': ['company', 'stock', 'market', 'ceo', 'revenue', 'economy'],
+        'science': ['research', 'study', 'scientist', 'climate', 'space', 'vaccine'],
+    }
+    
+    topic_scores = {}
+    for topic, keywords in topic_keywords.items():
+        topic_scores[topic] = sum(1 for kw in keywords if kw in text_lower)
+    
+    if max(topic_scores.values()) > 0:
+        return max(topic_scores, key=topic_scores.get)
+    
+    return 'general'
+
+
+def detect_political_lean_enhanced(text: str, source: str, title: str = "", url: str = "") -> Dict[str, Any]:
+    """
+    Enhanced political lean detection combining multiple signals.
+    
+    Combines:
+    - Content type detection
+    - Topic category detection
+    - Advanced framing analysis
+    - Context-aware keywords
+    - Sentiment analysis
+    
+    Returns:
+        Dict with lean_score, confidence, and all contributing factors
+    """
+    # Detect content type and topic
+    content_type = detect_content_type(text, title, url)
+    topic_category = detect_topic_category(text)
+    
+    # Non-political topics should be neutral
+    if topic_category in ['entertainment', 'sports', 'tech', 'science']:
+        return {
+            "lean_score": 0.0,
+            "lean_label": "neutral",
+            "confidence": 0.9,
+            "content_type": content_type,
+            "topic_category": topic_category,
+            "reason": f"Non-political topic: {topic_category}"
+        }
+    
+    # Historical WWII content detection
+    historical_indicators = ['world war', 'wwii', 'ww2', 'nazi', 'pearl harbor', 'hiroshima']
+    historical_matches = sum(1 for indicator in historical_indicators if indicator in text.lower())
+    if historical_matches >= 2:
+        return {
+            "lean_score": 0.0,
+            "lean_label": "neutral",
+            "confidence": 0.95,
+            "content_type": content_type,
+            "topic_category": "historical",
+            "reason": "Historical WWII content"
+        }
+    
+    # Get all analysis components
+    sentiment = analyze_sentiment(text)
+    framing = detect_advanced_framing(text, topic_category)
+    keywords = analyze_keywords_with_context(text, topic_category)
+    
+    # Calculate composite lean score
+    # Keywords contribute most (50%)
+    keyword_contribution = (keywords["keyword_balance"] / 10.0) * 50
+    
+    # Framing contributes 30%
+    left_framing = framing["framing_scores"].get("victim_framing", 0) + \
+                   framing["framing_scores"].get("systemic_framing", 0)
+    right_framing = framing["framing_scores"].get("threat_framing", 0) + \
+                    framing["framing_scores"].get("individual_framing", 0)
+    framing_contribution = ((right_framing - left_framing) / 5.0) * 30
+    
+    # Sentiment contributes 20%
+    sentiment_contribution = sentiment["polarity"] * 20
+    
+    # Combined score
+    lean_score = keyword_contribution + framing_contribution + sentiment_contribution
+    lean_score = max(-100, min(100, lean_score))  # Clamp to -100 to 100
+    
+    # Confidence based on signal strength
+    total_signals = keywords["keyword_confidence"] + \
+                   (framing["framing_diversity"] / 8.0) + \
+                   (abs(sentiment["polarity"]) if sentiment["polarity"] != 0 else 0)
+    confidence = min(0.95, total_signals / 3.0)
+    
+    # Generate label
+    if lean_score < -60:
+        lean_label = "far-left"
+    elif lean_score < -30:
+        lean_label = "left"
+    elif lean_score < -10:
+        lean_label = "center-left"
+    elif lean_score <= 10:
+        lean_label = "neutral"
+    elif lean_score <= 30:
+        lean_label = "center-right"
+    elif lean_score <= 60:
+        lean_label = "right"
+    else:
+        lean_label = "far-right"
+    
+    return {
+        "lean_score": round(lean_score, 2),
+        "lean_label": lean_label,
+        "confidence": round(confidence, 2),
+        "content_type": content_type,
+        "topic_category": topic_category,
+        "contributing_factors": {
+            "keywords": round(keyword_contribution, 2),
+            "framing": round(framing_contribution, 2),
+            "sentiment": round(sentiment_contribution, 2)
+        },
+        "detailed_analysis": {
+            "sentiment": sentiment,
+            "framing": framing,
+            "keywords": keywords
+        }
+    }
+
+
+def generate_grandma_brief(articles: List[Dict[str, Any]], query: str = "this topic", llm=None) -> str:
+    """
+    Generate a neutral, grandma-friendly summary using an LLM.
+    
+    Uses a carefully crafted prompt to ensure the output is:
+    - Clear and simple for readers with no background knowledge
+    - Neutral and unbiased, avoiding political framing
+    - Focused on facts about what's happening and why it matters
+    - Free from technical jargon or meta-analysis
+    """
+    # Import LLM here to avoid circular dependencies
+    try:
+        from tutorials.holistic_ai_bedrock import get_chat_model
+    except ImportError:
+        from backend.basic_cli import get_chat_model
+    
+    # Create LLM instance if not provided
+    if llm is None:
+        llm = get_chat_model(model_name="claude-3-5-sonnet", temperature=0.3, max_tokens=600)
+    
+    # Gather article information
+    article_texts = []
+    for i, article in enumerate(articles[:10], 1):  # Limit to top 10 articles
+        title = article.get("title", "")
+        description = article.get("description", "")
+        source = article.get("source", "")
+        article_texts.append(f"{i}. [{source}] {title}\n   {description}")
+    
+    articles_context = "\n\n".join(article_texts)
+    
+    # Grandma-friendly prompt
+    system_prompt = """You are a helpful assistant that explains current events in simple, clear language for older readers who may not have background knowledge about the topic.
+
+Your task is to write a neutral, factual summary that:
+- Uses simple, everyday language
+- Avoids political framing and doesn't take sides
+- Focuses on what is happening, why it matters, who is involved, and how it affects ordinary people
+- Sticks to confirmed facts and avoids speculation
+- Maintains a calm, steady, and factual tone
+- Does NOT mention source types, bias scores, censorship levels, or any meta-analysis
+- Is between 250-400 words
+
+Write as if you're explaining the news to your grandmother over tea."""
+
+    user_prompt = f"""Give me a clear, neutral summary of the topic: "{query}"
+
+Based on these news articles:
+
+{articles_context}
+
+Write it in simple, everyday language so that an older reader with no background knowledge can understand it.
+Avoid political framing, avoid taking sides, and do not mention source types, bias scores, censorship levels, or any meta-analysis of the data.
+Just explain what is happening, why it matters, who is involved, and how it affects ordinary people.
+Stick to confirmed facts and avoid speculation.
+Keep the tone calm, steady, and factual.
+
+Provide a summary of 250-400 words."""
+
+    try:
+        # Invoke LLM
+        from langchain_core.messages import SystemMessage, HumanMessage
+        
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
+        ]
+        
+        response = llm.invoke(messages)
+        brief = getattr(response, "content", str(response)).strip()
+        
+        # Ensure we have a reasonable length (fallback if LLM didn't follow instructions)
+        words = brief.split()
+        if len(words) > 500:
+            brief = " ".join(words[:500])
+        elif len(words) < 200:
+            # If too short, add a gentle closing
+            brief += " This situation continues to develop, and more information may become available in the coming days."
+        
+        return brief
+        
+    except Exception as e:
+        logger.error(f"Failed to generate grandma brief with LLM: {e}")
+        # Fallback to a simple concatenation
+        fallback = f"Here's what's happening with {query}: "
+        fallback += " ".join([f"{a.get('title', '')}." for a in articles[:3]])
+        return fallback[:400]
+
+
+def build_dashboard_payload(articles: List[Dict[str, Any]], query: str = "news topic", llm=None) -> Dict[str, Any]:
     """Compose the deterministic dashboard payload used by the CLI and tests."""
     radar = compute_censorship_radar(articles)
     framing = compute_framing_comparison(radar.get("bias_vectors", {}), radar.get("union_topics", []))
@@ -931,7 +1520,7 @@ def build_dashboard_payload(articles: List[Dict[str, Any]], query: str = "news t
         "blame_distribution": entity.get("blame_distribution", {}),
         "omissions_diff": omissions_diff,
         "entity_stance": entity,
-        "grandma_brief": generate_grandma_brief(articles, query),
+        "grandma_brief": generate_grandma_brief(articles, query, llm),
     }
     return payload
 
