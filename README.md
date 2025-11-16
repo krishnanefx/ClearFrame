@@ -1,4 +1,4 @@
-# FactFlow: News Bias & Coverage Analyzer
+# ClearFrame: News Bias & Coverage Analyzer
 
 Full‑stack app (Flask API + Vite/React frontend) for multi‑source news retrieval, bias coverage analysis, and observability. Built for The Great Agent Hack 2025.
 

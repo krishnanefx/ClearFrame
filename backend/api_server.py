@@ -9,6 +9,7 @@ import sys
 import logging
 import hashlib
 import json
+import time
 from pathlib import Path
 from typing import Dict, Any
 from flask import Flask, request, jsonify
@@ -68,15 +69,46 @@ CORS(app)  # Enable CORS for all routes
 # Load configuration
 config = Config()
 
-# Grandma brief cache directory
+# Cache directories
 CACHE_DIR = PROJECT_ROOT / "data" / "grandma_cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+FULL_CACHE_DIR = PROJECT_ROOT / "data" / "analysis_cache"
+FULL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
     return jsonify({"status": "healthy", "service": "FactFlow API"}), 200
+
+
+@app.route('/api/cache/status', methods=['GET'])
+def cache_status():
+    """Check which demo prompts are cached"""
+    demo_prompts = [
+        "News about LGBTQ developments",
+        "News of the war in Sudan",
+        "Taylor Swift current news",
+        "News on Trump's tariffs",
+    ]
+    
+    cache_info = {}
+    for prompt in demo_prompts:
+        cache_key = hashlib.md5(prompt.lower().strip().encode('utf-8')).hexdigest()
+        grandma_cache_file = CACHE_DIR / f"{cache_key}.json"
+        full_cache_file = FULL_CACHE_DIR / f"{cache_key}.json"
+        cache_info[prompt] = {
+            "cached": full_cache_file.exists(),
+            "grandma_brief_cached": grandma_cache_file.exists(),
+            "cache_key": cache_key
+        }
+    
+    return jsonify({
+        "cache_dir": str(CACHE_DIR),
+        "full_cache_dir": str(FULL_CACHE_DIR),
+        "prompts": cache_info
+    }), 200
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -115,6 +147,29 @@ def analyze_claim():
         enable_advanced = data.get('enable_advanced', False)
         
         logger.info(f"Received analysis request for query: {query}")
+        
+        # ⚡ FAST PATH: Check full response cache first
+        cache_key = hashlib.md5(query.lower().strip().encode()).hexdigest()
+        full_cache_file = FULL_CACHE_DIR / f"{cache_key}.json"
+        
+        if full_cache_file.exists():
+            try:
+                logger.info(f"⚡ CACHE HIT! Loading complete analysis from cache")
+                cache_start = time.perf_counter()
+                with open(full_cache_file, 'r', encoding='utf-8') as f:
+                    cached_result = json.load(f)
+                cache_end = time.perf_counter()
+                cache_latency_ms = int((cache_end - cache_start) * 1000)
+                
+                # Update observability metrics with actual cache latency
+                if cached_result.get("observability"):
+                    cached_result["observability"]["total_latency_ms"] = cache_latency_ms
+                    cached_result["observability"]["cached"] = True
+                    
+                logger.info(f"✅ Returned cached result in {cache_latency_ms}ms (0 API calls, 0 emissions)")
+                return jsonify(cached_result), 200
+            except Exception as e:
+                logger.warning(f"Cache read failed: {e}, running fresh analysis...")
         
         # Start emissions tracking
         start_emissions_tracker()
@@ -220,6 +275,12 @@ def analyze_claim():
         stop_emissions_tracker()
         metrics = get_metrics()
         
+        # Calculate total latency from all metrics
+        total_latency_ms = 0
+        if metrics.get("by_name"):
+            for name, stats in metrics["by_name"].items():
+                total_latency_ms += stats.get("avg_ms", 0) * stats.get("count", 0)
+        
         # Generate grandma brief (neutral, simple summary using LLM)
         # Use cache to avoid redundant LLM calls for the same query
         cache_key = hashlib.md5(query.lower().strip().encode()).hexdigest()
@@ -263,15 +324,24 @@ def analyze_claim():
             "grandma_brief": grandma_brief,
             "ingestion_summary": ingestion_meta,
             "observability": {
-                "emissions_kg": metrics.get("emissions_kg"),
-                "total_latency_ms": metrics.get("total_latency_ms"),
+                "emissions_kg": metrics.get("emissions_kg") or 0,
+                "total_latency_ms": int(total_latency_ms),
                 "llm_calls": metrics.get("llm_calls", 0),
-                "api_calls": metrics.get("api_calls", 0),
+                "api_calls": metrics.get("api_requests", 0),  # Changed from api_calls to api_requests
+                "total_calls": metrics.get("calls", 0),
                 # Bubble up derived costs/tokens if available
                 "cost_usd": ingestion_meta.get("total_cost_usd") if isinstance(ingestion_meta, dict) else None,
                 "token_usage": ingestion_meta.get("token_usage") if isinstance(ingestion_meta, dict) else None,
             }
         }
+        
+        # 💾 Cache the complete response for instant future lookups
+        try:
+            with open(full_cache_file, 'w', encoding='utf-8') as f:
+                json.dump(result, f, indent=2)
+            logger.info(f"💾 Cached complete analysis for instant future access")
+        except Exception as cache_err:
+            logger.warning(f"Failed to cache full response: {cache_err}")
         
         logger.info(f"Analysis complete: {len(covered_articles)} articles analyzed")
         return jsonify(result), 200

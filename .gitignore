@@ -28,8 +28,20 @@ Thumbs.db
 # Streamlit
 .streamlit/
 
-# Data
-data/
+# Data & Cache
+data/grandma_cache/
+data/analysis_cache/
+data/benchmarks/
 cache/
 *.db
 *.sqlite
+
+# Temporary test files
+test_*.py
+!tests/test_*.py
+demo_trace.json
+observability_dashboard.json
+
+# Logs
+*.log
+nohup.out

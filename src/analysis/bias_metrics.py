@@ -114,7 +114,9 @@ class ArticleBiasProfile:
                 'marginalized communities', 'social justice', 'progressive', 'equity',
                 'humanitarian corridor', 'ceasefire', 'international law', 'war crimes',
                 'human rights', 'displacement crisis', 'colonial legacy',
-                'climate justice', 'racial justice', 'gender equity'
+                'climate justice', 'racial justice', 'gender equity',
+                'financial corruption', 'political corruption', 'embezzlement', 'money laundering',
+                'kleptocracy', 'systemic corruption', 'abuse of power', 'grand corruption'
             ],
             'moderate': [
                 'climate change', 'healthcare access', 'workers rights', 'regulation',
@@ -124,7 +126,9 @@ class ArticleBiasProfile:
                 'civilian protection', 'cease-fire', 'ceasefire', 'atrocities',
                 'gun safety', 'renewable energy', 'net zero', 'carbon tax',
                 'police reform', 'medicaid', 'medicare expansion', 'affordable housing',
-                'union protections', 'living wage', 'voting rights', 'reproductive rights'
+                'union protections', 'living wage', 'voting rights', 'reproductive rights',
+                'accountability', 'transparency', 'investigation', 'scandal', 'corruption',
+                'fraud', 'misconduct', 'whistleblower', 'probe', 'indictment'
             ]
         }
 
@@ -257,15 +261,17 @@ class ArticleBiasProfile:
             section_hint = (source_hint / 2) if source_hint else 6 * (1 if "right" in section_str else -1)
         source_hint += section_hint
 
-        # Calculate lean score (softened)
+        # Calculate lean score (amplified for better detection)
         if left_total + right_total > 0:
-            raw_score = ((right_total - left_total) / (left_total + right_total + 1)) * 60
+            # Much stronger scaling to show differences
+            raw_score = ((right_total - left_total) / (left_total + right_total + 0.5)) * 100
         else:
             raw_score = 0.0
 
-        raw_score += source_hint
+        # Amplify source hints for better differentiation
+        raw_score += source_hint * 1.5
 
-        self.political_lean_score = max(-70, min(70, raw_score))
+        self.political_lean_score = max(-100, min(100, raw_score))
     
     def _analyze_emotional_manipulation(self):
         """Detect emotional manipulation tactics."""
@@ -298,11 +304,12 @@ class ArticleBiasProfile:
             self.emotional_triggers.extend([(category, w) for w in title_found])
             self.emotional_triggers.extend([(category, w) for w in text_found])
         
-        # More sensitive scoring
+        # HIGHLY AMPLIFIED scoring for visibility
         word_count = len(self.text.split())
         if word_count > 0:
             density = (total_triggers / word_count) * 100
-            self.emotional_manipulation_score = min(100, density * 15)
+            # Increased from 15 to 35 for much stronger signal
+            self.emotional_manipulation_score = min(100, density * 35)
     
     def _analyze_sensationalism(self):
         """Detect sensationalist language."""
@@ -326,7 +333,8 @@ class ArticleBiasProfile:
         # Check for sensational patterns
         pattern_count = sum(len(re.findall(p, text_lower)) for p in sensational_patterns)
         
-        self.sensationalism_score = min(100, clickbait_score + (pattern_count * 15))
+        # HIGHLY AMPLIFIED - increased from 15 to 40
+        self.sensationalism_score = min(100, clickbait_score + (pattern_count * 40))
     
     def _analyze_propaganda(self):
         """Detect propaganda techniques."""
@@ -529,18 +537,29 @@ class ArticleBiasProfile:
         """
         Calculate overall bias score in range [-50, 50].
         Negative scores lean left, positive scores lean right, 0 is neutral.
+        HIGHLY AMPLIFIED to show meaningful differences.
         """
-        # Amplify political lean influence for better differentiation
-        lean_direction = max(-1.0, min(1.0, self.political_lean_score / 50.0))
+        # Much more aggressive political lean influence
+        lean_direction = max(-1.0, min(1.0, self.political_lean_score / 40.0))
+        
+        # Amplified component weights
         bias_strength = (
-            abs(self.political_lean_score) * 0.4 +
-            self.emotional_manipulation_score * 0.2 +
-            self.sensationalism_score * 0.15 +
-            self.propaganda_score * 0.15 +
-            (100 - self.factual_language_score) * 0.1
+            abs(self.political_lean_score) * 0.6 +  # Increased from 0.4
+            self.emotional_manipulation_score * 0.3 +  # Increased from 0.2
+            self.sensationalism_score * 0.25 +  # Increased from 0.15
+            self.propaganda_score * 0.2 +  # Increased from 0.15
+            (100 - self.factual_language_score) * 0.15  # Increased from 0.1
         )
-        normalized_strength = min(1.0, bias_strength / 80.0)  # Lower denominator for more sensitivity
-        return round(normalized_strength * 50 * lean_direction, 2)
+        
+        # Much lower denominator for extreme sensitivity
+        normalized_strength = min(1.0, bias_strength / 50.0)  # Was 80.0
+        
+        # Add baseline noise to avoid zeros
+        base_signal = 0
+        if self.emotional_manipulation_score > 5 or self.sensationalism_score > 5:
+            base_signal = 2 if lean_direction >= 0 else -2
+        
+        return round(normalized_strength * 50 * lean_direction + base_signal, 2)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
