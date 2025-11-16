@@ -504,4 +504,9 @@ This project is part of The Great Agent Hack 2025.
 - **LangChain** – Agent orchestration framework
 - **LangSmith** – Observability and tracing
 
-Built by [@krishnanefx](https://github.com/krishnanefx)
+Built by
+[@krishnanefx](https://github.com/krishnanefx)
+[@LCS3002](https://github.com/LCS3002)
+[@kayaclaridge-sys](https://github.com/kayaclaridge-sys)
+[@cheongbowen07](https://github.com/cheongbowen07)
+[@fahmed01](https://github.com/fahmed01)
