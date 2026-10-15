@@ -6,6 +6,7 @@ pyyaml>=6.0.1
 # LangChain and AI
 langchain>=0.1.0
 langchain-core>=0.1.0
+langchain-openai>=0.1.0  # tutorials/holistic_ai_bedrock.py imports ChatOpenAI
 langchain-valyu>=0.1.0
 langgraph>=0.2.0
 pydantic>=2.0.0
