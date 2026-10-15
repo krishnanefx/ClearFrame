@@ -26,19 +26,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # Frontend UI
-  ui:
-    build:
-      context: ./frontend/factflow-ui
-      dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=http://localhost:5001
-    depends_on:
-      - api
-    restart: unless-stopped
-
 networks:
   default:
     name: factflow-network

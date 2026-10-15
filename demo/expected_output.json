@@ -1,0 +1,292 @@
+{
+  "bias_analysis": {
+    "aggregate_stats": {
+      "average_scores": {
+        "emotional_manipulation": 55.91,
+        "factual_language": 52.0,
+        "overall_bias": 1.2,
+        "political_lean": 0.0,
+        "propaganda": 0.0,
+        "sensationalism": 8.0
+      },
+      "category_breakdown": {
+        "bias_categories": {
+          "neutral": 5
+        },
+        "credibility_tiers": {
+          "low": 1,
+          "medium": 4
+        },
+        "source_types": {
+          "blog": 1,
+          "independent": 4
+        }
+      },
+      "coverage_assessment": {
+        "high_credibility_count": 0,
+        "left_leaning_articles": 0,
+        "low_credibility_count": 1,
+        "neutral_articles": 5,
+        "right_leaning_articles": 0
+      },
+      "distribution": {
+        "least_biased_score": 0.0,
+        "most_biased_score": 2.0,
+        "political_lean_range": [
+          0.0,
+          0.0
+        ]
+      },
+      "propaganda_analysis": {
+        "top_techniques": {},
+        "total_techniques_detected": 0,
+        "unique_techniques": 0
+      }
+    },
+    "article_count": 5,
+    "articles": [
+      {
+        "bias_scores": {
+          "balanced_framing": 65,
+          "emotional_manipulation": 0.0,
+          "factual_language": 60,
+          "overall_bias": 0.0,
+          "political_lean": 0.0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium",
+          "source_type": "independent"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "enhanced_analysis": {
+          "content_type": "news",
+          "framing_analysis": {},
+          "keyword_analysis": {},
+          "lean_contributing_factors": {},
+          "political_lean_confidence": 0.9,
+          "sentiment_analysis": {},
+          "topic_category": "tech"
+        },
+        "source": "metro-ledger.example",
+        "title": "Council approves 15% transit fare rise after three-hour debate",
+        "url": "https://metro-ledger.example/news/fare-vote"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 100,
+          "factual_language": 50,
+          "overall_bias": 2.0,
+          "political_lean": 0.0,
+          "propaganda": 0,
+          "sensationalism": 40,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "low",
+          "source_type": "blog"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [
+            "fear:shocking",
+            "fear:devastating",
+            "anger:betrayal",
+            "anger:lies"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "enhanced_analysis": {
+          "content_type": "news",
+          "framing_analysis": {},
+          "keyword_analysis": {},
+          "lean_contributing_factors": {},
+          "political_lean_confidence": 0.9,
+          "sentiment_analysis": {},
+          "topic_category": "tech"
+        },
+        "source": "peoples-voice.blog.example",
+        "title": "Fare hike is a shocking betrayal of working families",
+        "url": "https://peoples-voice.blog.example/fare-betrayal"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 65,
+          "emotional_manipulation": 79.55,
+          "factual_language": 50,
+          "overall_bias": 2.0,
+          "political_lean": 0.0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium",
+          "source_type": "independent"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [
+            "anger:lies"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "enhanced_analysis": {
+          "content_type": "news",
+          "framing_analysis": {},
+          "keyword_analysis": {},
+          "lean_contributing_factors": {},
+          "political_lean_confidence": 0.9,
+          "sentiment_analysis": {},
+          "topic_category": "tech"
+        },
+        "source": "free-enterprise-daily.example",
+        "title": "Taxpayers rescued from transit spending spree, for now",
+        "url": "https://free-enterprise-daily.example/transit-spending"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 0.0,
+          "factual_language": 50,
+          "overall_bias": 0.0,
+          "political_lean": 0.0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 30
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium",
+          "source_type": "independent"
+        },
+        "detected_features": {
+          "cited_sources": [
+            "What the new fares mean for your commute A single bus ticket will rise from 2.00 to 2.30. Monthly passes go up by 8 dollars. Discounts for students and seniors are unchanged, the transport department"
+          ],
+          "emotional_triggers": [],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "enhanced_analysis": {
+          "content_type": "news",
+          "framing_analysis": {},
+          "keyword_analysis": {},
+          "lean_contributing_factors": {},
+          "political_lean_confidence": 0.9,
+          "sentiment_analysis": {},
+          "topic_category": "tech"
+        },
+        "source": "commuter-guide.example",
+        "title": "What the new fares mean for your commute",
+        "url": "https://commuter-guide.example/fares-explained"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 30,
+          "emotional_manipulation": 100,
+          "factual_language": 50,
+          "overall_bias": 2.0,
+          "political_lean": 0.0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 30
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium",
+          "source_type": "independent"
+        },
+        "detected_features": {
+          "cited_sources": [
+            "Union leaders"
+          ],
+          "emotional_triggers": [
+            "fear:threat",
+            "sympathy:displaced"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "enhanced_analysis": {
+          "content_type": "news",
+          "framing_analysis": {},
+          "keyword_analysis": {},
+          "lean_contributing_factors": {},
+          "political_lean_confidence": 0.9,
+          "sentiment_analysis": {},
+          "topic_category": "tech"
+        },
+        "source": "labour-wire.example",
+        "title": "Transit union threatens strike as council ignores displaced night-shift workers",
+        "url": "https://labour-wire.example/strike-threat"
+      }
+    ]
+  },
+  "censorship_radar": {
+    "bias_vectors": {
+      "diaspora_blog": {
+        "article_count": 1,
+        "omissions": [
+          "economy",
+          "governance",
+          "humanitarian"
+        ],
+        "stance": {
+          "foreign": 1,
+          "government": 0,
+          "protesters": 2
+        },
+        "topics": {
+          "diplomacy": 1,
+          "protest": 1
+        }
+      },
+      "independent": {
+        "article_count": 4,
+        "omissions": [],
+        "stance": {
+          "foreign": 9,
+          "government": 2,
+          "protesters": 1
+        },
+        "topics": {
+          "diplomacy": 4,
+          "economy": 1,
+          "governance": 2,
+          "humanitarian": 2,
+          "protest": 1
+        }
+      }
+    },
+    "scale_of_censorship": 30.0,
+    "severity": "low",
+    "union_topics": [
+      "diplomacy",
+      "economy",
+      "governance",
+      "humanitarian",
+      "protest"
+    ],
+    "version": "radar_v1"
+  },
+  "query": "city council transit fare increase"
+}
