@@ -4,14 +4,17 @@
       "average_scores": {
         "emotional_manipulation": 55.91,
         "factual_language": 52.0,
-        "overall_bias": 1.2,
-        "political_lean": 0.0,
+        "overall_bias": -2.73,
+        "political_lean": -5.05,
         "propaganda": 0.0,
         "sensationalism": 8.0
       },
       "category_breakdown": {
         "bias_categories": {
-          "neutral": 5
+          "center_left": 2,
+          "center_right": 1,
+          "left": 1,
+          "neutral": 1
         },
         "credibility_tiers": {
           "low": 1,
@@ -24,17 +27,17 @@
       },
       "coverage_assessment": {
         "high_credibility_count": 0,
-        "left_leaning_articles": 0,
+        "left_leaning_articles": 3,
         "low_credibility_count": 1,
-        "neutral_articles": 5,
-        "right_leaning_articles": 0
+        "neutral_articles": 1,
+        "right_leaning_articles": 1
       },
       "distribution": {
-        "least_biased_score": 0.0,
-        "most_biased_score": 2.0,
+        "least_biased_score": -22.75,
+        "most_biased_score": 10.27,
         "political_lean_range": [
-          0.0,
-          0.0
+          -16.6,
+          9.0
         ]
       },
       "propaganda_analysis": {
@@ -50,14 +53,14 @@
           "balanced_framing": 65,
           "emotional_manipulation": 0.0,
           "factual_language": 60,
-          "overall_bias": 0.0,
-          "political_lean": 0.0,
+          "overall_bias": -3.96,
+          "political_lean": -12.0,
           "propaganda": 0,
           "sensationalism": 0,
           "source_diversity": 0
         },
         "classification": {
-          "bias_category": "neutral",
+          "bias_category": "center_left",
           "credibility_tier": "medium",
           "source_type": "independent"
         },
@@ -70,12 +73,58 @@
         },
         "enhanced_analysis": {
           "content_type": "news",
-          "framing_analysis": {},
-          "keyword_analysis": {},
-          "lean_contributing_factors": {},
-          "political_lean_confidence": 0.9,
-          "sentiment_analysis": {},
-          "topic_category": "tech"
+          "framing_analysis": {
+            "balanced_pairs": 0,
+            "dominant_frame": "economic_framing",
+            "dominant_score": 1.0,
+            "framing_balance_score": 0.0,
+            "framing_diversity": 1,
+            "framing_scores": {
+              "economic_framing": 1.0,
+              "hero_framing": 0.0,
+              "individual_framing": 0.0,
+              "moral_framing": 0.0,
+              "systemic_framing": 0.0,
+              "threat_framing": 0.0,
+              "victim_framing": 0.0,
+              "villain_framing": 0.0
+            }
+          },
+          "keyword_analysis": {
+            "keyword_analysis": {
+              "conservative": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              },
+              "liberal": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              }
+            },
+            "keyword_balance": 0,
+            "keyword_confidence": 0.0,
+            "left_keywords_total": 0,
+            "right_keywords_total": 0
+          },
+          "lean_contributing_factors": {
+            "framing": 0.0,
+            "keywords": 0.0,
+            "sentiment": -12.0
+          },
+          "political_lean_confidence": 0.24,
+          "sentiment_analysis": {
+            "emotional_categories": {},
+            "intensity_modifiers": {},
+            "polarity": -0.6,
+            "sentiment_label": "negative",
+            "subjectivity": 0.9,
+            "textblob_available": true
+          },
+          "topic_category": "general"
         },
         "source": "metro-ledger.example",
         "title": "Council approves 15% transit fare rise after three-hour debate",
@@ -86,14 +135,14 @@
           "balanced_framing": 50,
           "emotional_manipulation": 100,
           "factual_language": 50,
-          "overall_bias": 2.0,
-          "political_lean": 0.0,
+          "overall_bias": -22.75,
+          "political_lean": -16.6,
           "propaganda": 0,
           "sensationalism": 40,
           "source_diversity": 0
         },
         "classification": {
-          "bias_category": "neutral",
+          "bias_category": "left",
           "credibility_tier": "low",
           "source_type": "blog"
         },
@@ -111,12 +160,62 @@
         },
         "enhanced_analysis": {
           "content_type": "news",
-          "framing_analysis": {},
-          "keyword_analysis": {},
-          "lean_contributing_factors": {},
-          "political_lean_confidence": 0.9,
-          "sentiment_analysis": {},
-          "topic_category": "tech"
+          "framing_analysis": {
+            "balanced_pairs": 0,
+            "dominant_frame": "hero_framing",
+            "dominant_score": 0.5,
+            "framing_balance_score": 0.0,
+            "framing_diversity": 2,
+            "framing_scores": {
+              "economic_framing": 0.0,
+              "hero_framing": 0.5,
+              "individual_framing": 0.0,
+              "moral_framing": 0.0,
+              "systemic_framing": 0.0,
+              "threat_framing": 0.0,
+              "victim_framing": 0.0,
+              "villain_framing": 0.5
+            }
+          },
+          "keyword_analysis": {
+            "keyword_analysis": {
+              "conservative": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              },
+              "liberal": {
+                "context_count": 1,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 1
+              }
+            },
+            "keyword_balance": -1,
+            "keyword_confidence": 0.1,
+            "left_keywords_total": 1,
+            "right_keywords_total": 0
+          },
+          "lean_contributing_factors": {
+            "framing": 0.0,
+            "keywords": -5.0,
+            "sentiment": -11.6
+          },
+          "political_lean_confidence": 0.31,
+          "sentiment_analysis": {
+            "emotional_categories": {
+              "anger": [
+                "outraged"
+              ]
+            },
+            "intensity_modifiers": {},
+            "polarity": -0.58,
+            "sentiment_label": "negative",
+            "subjectivity": 0.613,
+            "textblob_available": true
+          },
+          "topic_category": "general"
         },
         "source": "peoples-voice.blog.example",
         "title": "Fare hike is a shocking betrayal of working families",
@@ -127,14 +226,14 @@
           "balanced_framing": 65,
           "emotional_manipulation": 79.55,
           "factual_language": 50,
-          "overall_bias": 2.0,
-          "political_lean": 0.0,
+          "overall_bias": 10.27,
+          "political_lean": 9.0,
           "propaganda": 0,
           "sensationalism": 0,
           "source_diversity": 0
         },
         "classification": {
-          "bias_category": "neutral",
+          "bias_category": "center_right",
           "credibility_tier": "medium",
           "source_type": "independent"
         },
@@ -149,12 +248,58 @@
         },
         "enhanced_analysis": {
           "content_type": "news",
-          "framing_analysis": {},
-          "keyword_analysis": {},
-          "lean_contributing_factors": {},
-          "political_lean_confidence": 0.9,
-          "sentiment_analysis": {},
-          "topic_category": "tech"
+          "framing_analysis": {
+            "balanced_pairs": 0,
+            "dominant_frame": "economic_framing",
+            "dominant_score": 1.5,
+            "framing_balance_score": 0.0,
+            "framing_diversity": 2,
+            "framing_scores": {
+              "economic_framing": 1.5,
+              "hero_framing": 0.0,
+              "individual_framing": 0.0,
+              "moral_framing": 0.0,
+              "systemic_framing": 0.0,
+              "threat_framing": 0.0,
+              "victim_framing": 0.0,
+              "villain_framing": 0.5
+            }
+          },
+          "keyword_analysis": {
+            "keyword_analysis": {
+              "conservative": {
+                "context_count": 0,
+                "core_count": 1,
+                "intensity_count": 0,
+                "total_score": 1
+              },
+              "liberal": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              }
+            },
+            "keyword_balance": 1,
+            "keyword_confidence": 0.1,
+            "left_keywords_total": 0,
+            "right_keywords_total": 1
+          },
+          "lean_contributing_factors": {
+            "framing": 0.0,
+            "keywords": 5.0,
+            "sentiment": 4.0
+          },
+          "political_lean_confidence": 0.18,
+          "sentiment_analysis": {
+            "emotional_categories": {},
+            "intensity_modifiers": {},
+            "polarity": 0.2,
+            "sentiment_label": "neutral",
+            "subjectivity": 0.9,
+            "textblob_available": true
+          },
+          "topic_category": "business"
         },
         "source": "free-enterprise-daily.example",
         "title": "Taxpayers rescued from transit spending spree, for now",
@@ -165,14 +310,14 @@
           "balanced_framing": 50,
           "emotional_manipulation": 0.0,
           "factual_language": 50,
-          "overall_bias": 0.0,
-          "political_lean": 0.0,
+          "overall_bias": -3.21,
+          "political_lean": -9.66,
           "propaganda": 0,
           "sensationalism": 0,
           "source_diversity": 30
         },
         "classification": {
-          "bias_category": "neutral",
+          "bias_category": "center_left",
           "credibility_tier": "medium",
           "source_type": "independent"
         },
@@ -187,12 +332,58 @@
         },
         "enhanced_analysis": {
           "content_type": "news",
-          "framing_analysis": {},
-          "keyword_analysis": {},
-          "lean_contributing_factors": {},
-          "political_lean_confidence": 0.9,
-          "sentiment_analysis": {},
-          "topic_category": "tech"
+          "framing_analysis": {
+            "balanced_pairs": 0,
+            "dominant_frame": "victim_framing",
+            "dominant_score": 0.5,
+            "framing_balance_score": 0.0,
+            "framing_diversity": 1,
+            "framing_scores": {
+              "economic_framing": 0.0,
+              "hero_framing": 0.0,
+              "individual_framing": 0.0,
+              "moral_framing": 0.0,
+              "systemic_framing": 0.0,
+              "threat_framing": 0.0,
+              "victim_framing": 0.5,
+              "villain_framing": 0.0
+            }
+          },
+          "keyword_analysis": {
+            "keyword_analysis": {
+              "conservative": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              },
+              "liberal": {
+                "context_count": 1,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 1
+              }
+            },
+            "keyword_balance": -1,
+            "keyword_confidence": 0.1,
+            "left_keywords_total": 1,
+            "right_keywords_total": 0
+          },
+          "lean_contributing_factors": {
+            "framing": -3.0,
+            "keywords": -5.0,
+            "sentiment": -1.66
+          },
+          "political_lean_confidence": 0.1,
+          "sentiment_analysis": {
+            "emotional_categories": {},
+            "intensity_modifiers": {},
+            "polarity": -0.083,
+            "sentiment_label": "neutral",
+            "subjectivity": 0.452,
+            "textblob_available": true
+          },
+          "topic_category": "general"
         },
         "source": "commuter-guide.example",
         "title": "What the new fares mean for your commute",
@@ -203,8 +394,8 @@
           "balanced_framing": 30,
           "emotional_manipulation": 100,
           "factual_language": 50,
-          "overall_bias": 2.0,
-          "political_lean": 0.0,
+          "overall_bias": 5.99,
+          "political_lean": 4.0,
           "propaganda": 0,
           "sensationalism": 0,
           "source_diversity": 30
@@ -228,12 +419,62 @@
         },
         "enhanced_analysis": {
           "content_type": "news",
-          "framing_analysis": {},
-          "keyword_analysis": {},
-          "lean_contributing_factors": {},
-          "political_lean_confidence": 0.9,
-          "sentiment_analysis": {},
-          "topic_category": "tech"
+          "framing_analysis": {
+            "balanced_pairs": 1,
+            "dominant_frame": "threat_framing",
+            "dominant_score": 1.0,
+            "framing_balance_score": 0.25,
+            "framing_diversity": 3,
+            "framing_scores": {
+              "economic_framing": 0.0,
+              "hero_framing": 0.5,
+              "individual_framing": 0.0,
+              "moral_framing": 0.0,
+              "systemic_framing": 0.0,
+              "threat_framing": 1.0,
+              "victim_framing": 0.5,
+              "villain_framing": 0.0
+            }
+          },
+          "keyword_analysis": {
+            "keyword_analysis": {
+              "conservative": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              },
+              "liberal": {
+                "context_count": 0,
+                "core_count": 0,
+                "intensity_count": 0,
+                "total_score": 0
+              }
+            },
+            "keyword_balance": 0,
+            "keyword_confidence": 0.0,
+            "left_keywords_total": 0,
+            "right_keywords_total": 0
+          },
+          "lean_contributing_factors": {
+            "framing": 3.0,
+            "keywords": 0.0,
+            "sentiment": 1.0
+          },
+          "political_lean_confidence": 0.14,
+          "sentiment_analysis": {
+            "emotional_categories": {
+              "anger": [
+                "mad"
+              ]
+            },
+            "intensity_modifiers": {},
+            "polarity": 0.05,
+            "sentiment_label": "neutral",
+            "subjectivity": 0.217,
+            "textblob_available": true
+          },
+          "topic_category": "general"
         },
         "source": "labour-wire.example",
         "title": "Transit union threatens strike as council ignores displaced night-shift workers",

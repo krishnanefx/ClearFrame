@@ -62,7 +62,6 @@ def print_summary(result: dict) -> None:
     gated = [a for a in analysis["articles"] if a["enhanced_analysis"]["topic_category"] in ("entertainment", "sports", "tech", "science")]
     if gated:
         print(f"\nNote: {len(gated)} article(s) were tagged as a non-political topic, so their lean was set to 0 without scoring.")
-        print("The topic check matches substrings, so \"ai\" inside words like \"said\" counts as tech: see Known issues in the README.")
     print("\nScores are keyword/lexicon heuristics, not validated measurements: see the Evaluation section of the README.")
 
 

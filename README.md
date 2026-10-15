@@ -43,26 +43,23 @@ Output:
 Query: city council transit fare increase  (5 sample articles)
 
 source                             lean     category emotion sensat. propag. overall     topic
-metro-ledger.example                0.0      neutral     0.0     0.0     0.0     0.0      tech
-peoples-voice.blog.example          0.0      neutral   100.0    40.0     0.0     2.0      tech
-free-enterprise-daily.example       0.0      neutral    79.5     0.0     0.0     2.0      tech
-commuter-guide.example              0.0      neutral     0.0     0.0     0.0     0.0      tech
-labour-wire.example                 0.0      neutral   100.0     0.0     0.0     2.0      tech
+metro-ledger.example              -12.0  center_left     0.0     0.0     0.0    -4.0   general
+peoples-voice.blog.example        -16.6         left   100.0    40.0     0.0   -22.8   general
+free-enterprise-daily.example       9.0 center_right    79.5     0.0     0.0    10.3  business
+commuter-guide.example             -9.7  center_left     0.0     0.0     0.0    -3.2   general
+labour-wire.example                 4.0      neutral   100.0     0.0     0.0     6.0   general
 
-Lean counts: 0 left, 5 neutral, 0 right
+Lean counts: 3 left, 1 neutral, 1 right
 Coverage radar: omission score 30.0 (low), topics seen: diplomacy, economy, governance, humanitarian, protest
   independent    4 article(s), misses: none
   diaspora_blog  1 article(s), misses: economy, governance, humanitarian
-
-Note: 5 article(s) were tagged as a non-political topic, so their lean was set to 0 without scoring.
-The topic check matches substrings, so "ai" inside words like "said" counts as tech: see Known issues in the README.
 
 Scores are keyword/lexicon heuristics, not validated measurements: see the Evaluation section of the README.
 
 OK: full output matches demo/expected_output.json
 ```
 
-The demo skips the parts that need keys: article retrieval (Valyu) and the LLM-written summaries. Every article's lean shows 0 here because of a topic-detection bug, described under [Known issues](#known-issues).
+The demo skips the parts that need keys: article retrieval (Valyu) and the LLM-written summaries. Before the fixes under [Known issues](#known-issues), every article's lean showed 0 here because of a topic-detection bug.
 
 ### Full pipeline (needs API keys)
 
@@ -165,7 +162,7 @@ python backend/warm_cache_smart.py    # only prompts missing from the cache
 
 ## Evaluation
 
-ClearFrame's political-lean score (`detect_political_lean_enhanced` in `src/analysis/bias_metrics.py`) was compared against human labels. **It does not beat a trivial baseline.** Treat lean scores as illustrative, not as measurements.
+ClearFrame's political-lean score (`detect_political_lean_enhanced` in `src/analysis/bias_metrics.py`) was compared against human labels. **It does not beat a trivial baseline on accuracy**, before or after the fixes under [Known issues](#known-issues). Treat lean scores as illustrative, not as measurements.
 
 **Data.** The media-split test set of [Article-Bias-Prediction](https://github.com/ramybaly/Article-Bias-Prediction) (Baly et al., EMNLP 2020): 1,300 news articles labelled left / center / right by AllSides (402 left, 299 center, 599 right), from outlets that are not in that dataset's training split. No article text is committed here. The script downloads it on first run.
 
@@ -180,24 +177,26 @@ python evaluation/evaluate_bias.py    # writes evaluation/results.json
 
 | System | Input | Accuracy | Macro-F1 | Recall L / C / R |
 |---|---|---|---|---|
-| ClearFrame lean score | snippet | 0.268 | 0.218 | 0.04 / 0.82 / 0.15 |
-| ClearFrame lean score | full text | 0.317 | 0.284 | 0.09 / 0.53 / 0.37 |
+| ClearFrame lean score, fixed | snippet | 0.282 | 0.252 | 0.09 / 0.74 / 0.19 |
+| ClearFrame lean score, fixed | full text | 0.310 | 0.308 | 0.28 / 0.41 / 0.28 |
+| ClearFrame lean score, before fixes | snippet | 0.268 | 0.218 | 0.04 / 0.82 / 0.15 |
+| ClearFrame lean score, before fixes | full text | 0.317 | 0.284 | 0.09 / 0.53 / 0.37 |
 | Keyword baseline | snippet | 0.270 | 0.206 | 0.07 / 0.96 / 0.07 |
 | Keyword baseline | full text | 0.307 | 0.293 | 0.20 / 0.73 / 0.17 |
 | Majority class ("right") | – | 0.461 | 0.210 | 0 / 0 / 1 |
 | Always "center" | – | 0.230 | 0.125 | 0 / 1 / 0 |
 
-Per-article predictions and confusion matrices are in [`evaluation/results.json`](evaluation/results.json).
+"Before fixes" is the code at commit `4861f51`. "Fixed" is the current code, with the three fixes under [Known issues](#known-issues). Per-article predictions and confusion matrices for the current code are in [`evaluation/results.json`](evaluation/results.json).
 
-**Examples it gets wrong** (snippet input; IDs refer to the dataset):
+**Examples** (snippet input; IDs refer to the dataset):
 
-| ID | Outlet | Label | Score | Why |
-|---|---|---|---|---|
-| `SqLNY3j1qxchW0v7` | Salon | left | +30.7 (right) | One "liberal" keyword adds +5 toward right (sign bug below), and framing patterns add +18 |
-| `oRgUtBo9oi2WziJw` | Reason | right | −30.2 (left) | Matches on right-side intensity keywords are pushed left by the same sign bug |
-| `Ga5fn4vIxGAbfTfX` | Reuters | center | +21.1 (right) | No lean keywords at all. Framing patterns (+18) and sentiment (+3) alone cross the threshold |
+| ID | Outlet | Label | Before fixes | Fixed | Why |
+|---|---|---|---|---|---|
+| `SqLNY3j1qxchW0v7` | Salon | left | +30.7 (right) | +20.7 (right) | One "liberal" keyword now counts −5 instead of +5, but threat and individual framing patterns (+18) and sentiment (+7.7) still push it right |
+| `oRgUtBo9oi2WziJw` | Reason | right | −30.2 (left) | +29.8 (right) | Two right-side intensity keywords (+30) were pushed left by the sign bug. Now correct |
+| `Ga5fn4vIxGAbfTfX` | Reuters | center | +21.1 (right) | +21.1 (right) | No lean keywords at all. Framing patterns (+18) and sentiment (+3) alone cross the threshold. Unchanged by the fixes |
 
-In addition, 460 of 1,300 articles (35%) get no score: they are tagged as a non-political topic and forced to 0. See below.
+Before the fixes, 460 of 1,300 articles (35%) got no score: they were tagged as a non-political topic and forced to 0. With whole-word topic matching that drops to 56 (4%).
 
 **Limits.**
 - AllSides labels largely follow the outlet's overall rating, so they measure "which side published this" more than the slant of the text. A text-only lexicon cannot recover much of that signal.
@@ -207,11 +206,13 @@ In addition, 460 of 1,300 articles (35%) get no score: they are tagged as a non-
 
 ## Known issues
 
-Found by the evaluation above, and **not fixed** in this repository:
+Found by the evaluation above. All three are **fixed** in `src/analysis/bias_metrics.py`. The [Evaluation](#evaluation) table shows the scores before and after.
 
-1. **Keyword term has the wrong sign.** `analyze_keywords_with_context` returns `keyword_balance = left − right`, and `detect_political_lean_enhanced` adds it to a score where positive means right. Left keywords push articles right, and right keywords push them left. The existing test `tests/test_consistency.py::test_political_lean_calculation` fails for this reason (it expects a negative score and gets +11.0).
-2. **Topic check matches substrings.** `detect_topic_category` tests `kw in text`, so "ai" matches "said" or "against", and "app" matches "happen". Articles tagged as tech, sports, entertainment or science are forced to a lean of 0. This hits 35% of the evaluation set and all five demo articles.
-3. `"extreme"` is listed as an intensity keyword for both sides.
+1. **Keyword term had the wrong sign.** `analyze_keywords_with_context` returned `keyword_balance = left − right`, and `detect_political_lean_enhanced` adds it to a score where positive means right. Left keywords pushed articles right, and right keywords pushed them left. It now returns `right − left`. `tests/test_consistency.py::test_political_lean_calculation` failed for this reason (it expects a negative score and got +11.0). It now passes.
+2. **Topic check matched substrings.** `detect_topic_category` tested `kw in text`, so "ai" matched "said" or "against", and "app" matched "happen". Articles tagged as tech, sports, entertainment or science are forced to a lean of 0. This hit 35% of the evaluation set and all five demo articles. It now matches whole words only, which brings the evaluation set down to 4% and the demo to none. Plurals no longer match either ("games" is not "game").
+3. **`"extreme"` was an intensity keyword for both sides.** It is now only on the liberal list.
+
+Fixing them raises snippet accuracy from 0.268 to 0.282 and macro-F1 from 0.218 to 0.252. On full text, macro-F1 rises from 0.284 to 0.308 and accuracy falls from 0.317 to 0.310. Accuracy stays well below the majority-class baseline (0.461) in both settings.
 
 ---
 
@@ -292,7 +293,7 @@ pytest tests/test_consistency.py tests/test_bias_metrics_dashboard.py -v
 locust -f tests/test_load.py --host=http://localhost:5001
 ```
 
-On a clean Python 3.12 install without API keys, 16 of these 20 tests pass. Three dashboard tests fail because they call the LLM-backed grandma brief, which needs HolisticAI credentials. `test_political_lean_calculation` fails because of known issue 1.
+On a clean Python 3.12 install without API keys, 17 of these 20 tests pass. Three dashboard tests fail because they call the LLM-backed grandma brief, which needs HolisticAI credentials.
 
 ---
 

@@ -1224,7 +1224,7 @@ def analyze_keywords_with_context(text: str, topic: str = "general") -> Dict[str
             "conservative": {
                 "core": ["conservative", "right-wing", "republican party", "traditional"],
                 "context": ["law and order", "national security", "family values"],
-                "intensity": ["extreme", "far-right", "alt-right", "nationalist"]
+                "intensity": ["far-right", "alt-right", "nationalist"]
             }
         },
         
@@ -1292,7 +1292,8 @@ def analyze_keywords_with_context(text: str, topic: str = "general") -> Dict[str
         "keyword_analysis": keyword_analysis,
         "left_keywords_total": left_score,
         "right_keywords_total": right_score,
-        "keyword_balance": left_score - right_score,
+        # Positive means right, matching lean_score in detect_political_lean_enhanced
+        "keyword_balance": right_score - left_score,
         "keyword_confidence": round(keyword_confidence, 2),
     }
 
@@ -1317,7 +1318,8 @@ def detect_topic_category(text: str) -> str:
     
     topic_scores = {}
     for topic, keywords in topic_keywords.items():
-        topic_scores[topic] = sum(1 for kw in keywords if kw in text_lower)
+        # Whole words only, so "ai" does not match "said" and "app" does not match "happen"
+        topic_scores[topic] = sum(1 for kw in keywords if re.search(rf"\b{re.escape(kw)}\b", text_lower))
     
     if max(topic_scores.values()) > 0:
         return max(topic_scores, key=topic_scores.get)
