@@ -1,0 +1,37 @@
+{
+  "set": "standard_news",
+  "total_queries": 3,
+  "total_cost_usd": 0.014499999999999999,
+  "avg_search_latency_ms": 20116.85,
+  "avg_analysis_latency_ms": 67064.85,
+  "emissions_kg": null,
+  "rows": [
+    {
+      "query": "latest developments in AI regulation in Europe",
+      "mode": "agent",
+      "tools": "bias,credibility,nlp_bias",
+      "articles": 0,
+      "cost_usd": 0.0,
+      "search_latency_ms": 29404.66,
+      "analysis_latency_ms": 52895.79
+    },
+    {
+      "query": "economic impact of climate change on Southeast Asia",
+      "mode": "structured",
+      "tools": "auto",
+      "articles": 5,
+      "cost_usd": 0.007,
+      "search_latency_ms": 17659.22,
+      "analysis_latency_ms": 52895.79
+    },
+    {
+      "query": "geopolitical tensions in the South China Sea",
+      "mode": "debate",
+      "tools": "auto",
+      "articles": 5,
+      "cost_usd": 0.0075,
+      "search_latency_ms": 13286.68,
+      "analysis_latency_ms": 95402.96
+    }
+  ]
+}

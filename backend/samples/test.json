@@ -1,0 +1,239 @@
+{
+  "article_count": 5,
+  "bias_analysis": {
+    "aggregate_stats": {
+      "average_scores": {
+        "emotional_manipulation": 25.78,
+        "factual_language": 50.4,
+        "overall_bias": 0,
+        "political_lean": 0,
+        "propaganda": 0,
+        "sensationalism": 0
+      },
+      "category_breakdown": {
+        "bias_categories": {
+          "neutral": 5
+        },
+        "credibility_tiers": {
+          "low": 3,
+          "medium": 1,
+          "medium-high": 1
+        },
+        "source_types": {
+          "blog": 3,
+          "encyclopedia": 1,
+          "mainstream": 1
+        }
+      },
+      "coverage_assessment": {
+        "high_credibility_count": 1,
+        "left_leaning_articles": 0,
+        "low_credibility_count": 3,
+        "neutral_articles": 5,
+        "right_leaning_articles": 0
+      },
+      "distribution": {
+        "least_biased_score": 0,
+        "most_biased_score": 0,
+        "political_lean_range": [
+          0,
+          0
+        ]
+      },
+      "propaganda_analysis": {
+        "top_techniques": {},
+        "total_techniques_detected": 0,
+        "unique_techniques": 0
+      }
+    },
+    "article_count": 5,
+    "articles": [
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 18.99,
+          "factual_language": 50,
+          "overall_bias": 0,
+          "political_lean": 0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium-high",
+          "source_type": "mainstream"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [
+            "anger:brutal"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "source": "web",
+        "title": "Sudan’s army captures two areas in North Kordofan as RSF burns more bodies | Sudan war News | Al Jazeera",
+        "url": "https://www.aljazeera.com/news/2025/11/15/sudans-army-captures-two-areas-in-north-kordofan-as-rsf-burns-more-bodies?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 25,
+          "factual_language": 52,
+          "overall_bias": 0,
+          "political_lean": 0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "medium",
+          "source_type": "encyclopedia"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [
+            "fear:danger"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "source": "web",
+        "title": "Sudanese civil war (2023–present) - Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 0,
+          "factual_language": 50,
+          "overall_bias": 0,
+          "political_lean": 0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "low",
+          "source_type": "blog"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "source": "web",
+        "title": "Sudan war: Aid teams plead for access to thousands trapped in El Fasher | UN News",
+        "url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 84.91,
+          "factual_language": 50,
+          "overall_bias": 0,
+          "political_lean": 0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "low",
+          "source_type": "blog"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [
+            "fear:crisis"
+          ],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "source": "web",
+        "title": "Sudan at War: A Crisis the World Ignores | KPFA",
+        "url": "https://kpfa.org/episode/hard-knock-radio-november-14-2025/?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "bias_scores": {
+          "balanced_framing": 50,
+          "emotional_manipulation": 0,
+          "factual_language": 50,
+          "overall_bias": 0,
+          "political_lean": 0,
+          "propaganda": 0,
+          "sensationalism": 0,
+          "source_diversity": 0
+        },
+        "classification": {
+          "bias_category": "neutral",
+          "credibility_tier": "low",
+          "source_type": "blog"
+        },
+        "detected_features": {
+          "cited_sources": [],
+          "emotional_triggers": [],
+          "loaded_words": [],
+          "missing_perspectives": [],
+          "propaganda_techniques": []
+        },
+        "source": "web",
+        "title": "What Is Happening in Sudan and Why It Is Not Getting the Attention It Deserves",
+        "url": "https://thediplomaticinsight.com/what-is-happening-in-sudan/?utm_source=valyu.ai&utm_medium=referral"
+      }
+    ]
+  },
+  "ingestion_summary": {
+    "counts_by_class": {
+      "diaspora_blog": 5
+    },
+    "fallback_used": false,
+    "mirror_count": 5,
+    "mirror_flags": [
+      {
+        "mirror_used": true,
+        "url": "https://www.aljazeera.com/news/2025/11/15/sudans-army-captures-two-areas-in-north-kordofan-as-rsf-burns-more-bodies?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "mirror_used": true,
+        "url": "https://en.wikipedia.org/wiki/Sudanese_civil_war_(2023–present)?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "mirror_used": true,
+        "url": "https://news.un.org/en/story/2025/11/1166366?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "mirror_used": true,
+        "url": "https://kpfa.org/episode/hard-knock-radio-november-14-2025/?utm_source=valyu.ai&utm_medium=referral"
+      },
+      {
+        "mirror_used": true,
+        "url": "https://thediplomaticinsight.com/what-is-happening-in-sudan/?utm_source=valyu.ai&utm_medium=referral"
+      }
+    ],
+    "missing_classes": [
+      "international",
+      "state_aligned"
+    ],
+    "requests": 4,
+    "retries": 0,
+    "total_cost_usd": 0.0075,
+    "total_results": 5
+  },
+  "observability": {
+    "api_calls": 0,
+    "emissions_kg": 0.04,
+    "llm_calls": 4,
+    "total_latency_ms": null
+  },
+  "query": "News about the current war in sudan",
+  "search_type": "web"
+}

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClearFrame · Censorship Radar Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #141821;
+      --muted: #6b7280;
+      --accent: #7dd3fc;
+      --accent-2: #a855f7;
+      --success: #34d399;
+      --warn: #f59e0b;
+      --error: #f87171;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(125, 211, 252, 0.08), transparent 25%),
+        radial-gradient(circle at 80% 0%, rgba(168, 85, 247, 0.08), transparent 20%),
+        #0b0d11;
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(10, 12, 18, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .logo-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 12px rgba(125, 211, 252, 0.8);
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #e5e7eb;
+      text-decoration: none;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+    }
+
+    nav a:hover {
+      border-color: rgba(125, 211, 252, 0.6);
+      color: #f8fafc;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #0f1115;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(125, 211, 252, 0.25);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 26px 20px 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      background: rgba(19, 22, 30, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .headline {
+      font-size: 2rem;
+      margin: 8px 0 4px;
+    }
+
+    .sub {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .input-box {
+      margin-top: 14px;
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: #f8fafc;
+      padding: 14px;
+      resize: vertical;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    textarea:focus {
+      border-color: rgba(125, 211, 252, 0.6);
+    }
+
+    .url-input {
+      margin-top: 8px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .url-input input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: #f8fafc;
+      outline: none;
+    }
+
+    .scan-ring {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(125, 211, 252, 0.22), rgba(168, 85, 247, 0.3));
+      filter: blur(18px);
+      animation: pulse 2.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.92);
+        opacity: 0.7;
+      }
+
+      50% {
+        transform: scale(1.06);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.92);
+        opacity: 0.7;
+      }
+    }
+
+    .gauge {
+      position: relative;
+      height: 180px;
+      display: grid;
+      place-items: center;
+    }
+
+    .gauge-track {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: conic-gradient(#60a5fa 0deg,
+          #7dd3fc 120deg,
+          #a3e635 180deg,
+          #facc15 220deg,
+          #fb7185 320deg,
+          #fb7185 360deg);
+      filter: brightness(0.92);
+      position: relative;
+      transform: rotate(-110deg);
+    }
+
+    .gauge-inner {
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      background: #0f1115;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    .gauge-value {
+      font-size: 2.6rem;
+      font-weight: 800;
+    }
+
+    .gauge-label {
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s ease, background 0.4s ease;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 12px;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chart {
+      height: 160px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.06);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header aria-label="Site header">
+    <div class="logo" role="banner">
+      <div class="logo-dot" aria-hidden="true"></div>
+      <div>ClearFrame · Censorship Radar</div>
+    </div>
+    <nav aria-label="Primary" class="nav-main">
+      <a href="#input" title="Input">Input</a>
+      <a href="#scale" title="Censorship Scale">Scale</a>
+      <a href="#angle-cards" title="Source Angles">Angles</a>
+      <a href="#coverage" title="Coverage Matrix">Coverage</a>
+      <a href="#omissions" title="Omissions Diff">Omissions</a>
+      <a href="#stance" title="Entity Stance">Stance</a>
+    </nav>
+    <button class="primary" id="run-scan-btn">Run Radar</button>
+  </header>
+
+  <main>
+    <section class="hero" id="input">
+      <div class="panel">
+        <div class="headline" style="font-size:1.7rem;">Live Censorship Radar</div>
+        <p class="sub muted">Enter a query and fetch dashboard data directly from the local FastAPI server
+          (<code>uvicorn radar_server:app --reload</code>).</p>
+        <form id="query-form" style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <input id="query-input" type="text" placeholder="e.g. war in sudan" required
+            style="flex:1; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#e5e7eb;" />
+          <select id="results-select"
+            style="padding:10px; border-radius:12px; background:rgba(255,255,255,0.04); color:#e5e7eb; border:1px solid rgba(255,255,255,0.08);">
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="10">10</option>
+          </select>
+          <select id="length-select"
+            style="padding:10px; border-radius:12px; background:rgba(255,255,255,0.04); color:#e5e7eb; border:1px solid rgba(255,255,255,0.08);">
+            <option value="small">small</option>
+            <option value="medium" selected>medium</option>
+            <option value="large">large</option>
+          </select>
+          <button class="primary" type="submit" style="padding:10px 18px;">Fetch Radar</button>
+        </form>
+        <div id="load-status" class="muted" style="margin-top:10px; font-size:0.85rem;">Idle.</div>
+      </div>
+      <div class="panel" id="scale">
+        <div class="muted" style="margin-bottom:6px;">Scale of Censorship</div>
+        <div class="gauge">
+          <div class="gauge-track" id="scale-track"></div>
+          <div class="gauge-inner">
+            <div style="text-align:center;">
+              <div class="gauge-value" id="scale-value">0.00</div>
+              <div class="gauge-label" id="scale-label">waiting</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:8px; font-size:0.8rem;" class="muted">Definition: average omission gap difference
+          (state_aligned − international); higher positive values indicate potential selective omission.</div>
+      </div>
+    </section>
+
+    <section class="grid" id="angle-cards">
+      <div class="panel" style="grid-column:1/-1;">
+        <div class="headline" style="font-size:1.4rem;">Source Angle Cards</div>
+        <p class="muted" style="font-size:0.85rem;">Deterministic summaries of source classes: emphasis, omissions,
+          lexical tone.</p>
+        <div id="cards-container"
+          style="display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); margin-top:12px;">
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="coverage">
+      <div class="panel">
+        <div class="headline" style="font-size:1.2rem;">Topic Coverage %</div>
+        <table id="coverage-table" style="width:100%; border-collapse:collapse; font-size:0.8rem;">
+          <thead>
+            <tr id="coverage-head"></tr>
+          </thead>
+          <tbody id="coverage-body"></tbody>
+        </table>
+      </div>
+      <div class="panel" id="stance">
+        <div class="headline" style="font-size:1.2rem;">Entity Stance</div>
+        <div id="stance-container" class="muted" style="font-size:0.85rem;">No data loaded.</div>
+      </div>
+      <div class="panel" id="omissions">
+        <div class="headline" style="font-size:1.2rem;">Omissions Differential</div>
+        <p class="muted" style="font-size:0.75rem;">Topics present in international/diaspora but absent in
+          state_aligned.</p>
+        <ul id="omissions-list" class="muted" style="font-size:0.85rem; margin:0; padding-left:18px;"></ul>
+      </div>
+    </section>
+
+    <section style="margin-top:16px;">
+      <div class="panel">
+        <div class="muted">Article cards</div>
+        <div class="grid">
+          <div class="article-card">
+            <div class="article-title">Fiscal Reform Bill Gains Momentum</div>
+            <div class="article-meta">sentinelnews.com · Center-right</div>
+            <div class="spacer"></div>
+            <div class="muted" style="font-size:0.95rem;">Lean: +0.18 · Sentiment: mild positive · Fact-checks: 4
+              verified, 1 partial.</div>
+          </div>
+          <div class="article-card">
+            <div class="article-title">Opposition Critiques Economic Outlook</div>
+            <div class="article-meta">dailyrecord.net · Center-left</div>
+            <div class="spacer"></div>
+            <div class="muted" style="font-size:0.95rem;">Lean: -0.12 · Sentiment: neutral · Fact-checks: 3 verified, 2
+              pending.</div>
+          </div>
+          <div class="article-card">
+            <div class="article-title">Local Communities Seek Clarity on Reforms</div>
+            <div class="article-meta">civicvoice.org · Neutral</div>
+            <div class="spacer"></div>
+            <div class="muted" style="font-size:0.95rem;">Lean: +0.02 · Sentiment: balanced · Fact-checks: 5 verified.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const queryForm = document.getElementById('query-form');
+    const queryInput = document.getElementById('query-input');
+    const resultsSelect = document.getElementById('results-select');
+    const lengthSelect = document.getElementById('length-select');
+    const statusEl = document.getElementById('load-status');
+    const scaleValueEl = document.getElementById('scale-value');
+    const scaleLabelEl = document.getElementById('scale-label');
+    const scaleTrackEl = document.getElementById('scale-track');
+    const cardsContainer = document.getElementById('cards-container');
+    const coverageHead = document.getElementById('coverage-head');
+    const coverageBody = document.getElementById('coverage-body');
+    const omissionsList = document.getElementById('omissions-list');
+    const stanceContainer = document.getElementById('stance-container');
+
+    function classifySeverity(scale) {
+      if (scale > 0.4) return { label: 'elevated', color: '#fb7185' };
+      if (scale > 0.1) return { label: 'moderate', color: '#f59e0b' };
+      if (scale < -0.2) return { label: 'reverse-gap', color: '#7dd3fc' };
+      return { label: 'low', color: '#34d399' };
+    }
+
+    function renderScale(scale) {
+      const sev = classifySeverity(scale);
+      scaleValueEl.textContent = scale.toFixed(2);
+      scaleLabelEl.textContent = sev.label;
+      scaleTrackEl.style.filter = `drop-shadow(0 0 6px ${sev.color}88)`;
+    }
+
+    function renderCards(cards) {
+      cardsContainer.innerHTML = '';
+      cards.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'panel';
+        const gap = c.avg_omission_gap;
+        const gapColor = gap > 0.6 ? '#fb7185' : gap > 0.3 ? '#f59e0b' : '#34d399';
+        div.innerHTML = `
+          <div style="font-weight:600; margin-bottom:4px;">${c.class}</div>
+          <div class="muted" style="font-size:0.75rem;">Sources: ${c.sources.join(', ') || 'n/a'}</div>
+          <div style="margin-top:6px; font-size:0.8rem;">${c.summary}</div>
+          <div style="margin-top:10px;">
+            <div class="bar"><div class="bar-fill" style="width:${(1 - c.avg_omission_gap) * 100}%; background:${gapColor};"></div></div>
+            <div class="muted" style="font-size:0.65rem; margin-top:4px;">Coverage completeness (inverse omission gap)</div>
+          </div>
+          <div style="margin-top:8px; font-size:0.7rem;" class="muted">Top topics: ${c.top_topics.join(', ') || 'none'}</div>
+          <div style="margin-top:4px; font-size:0.7rem;" class="muted">Missing: ${c.missing_topics.slice(0, 5).join(', ') || '—'}</div>
+        `;
+        cardsContainer.appendChild(div);
+      });
+    }
+
+    function renderCoverage(matrix) {
+      coverageHead.innerHTML = '<th style="text-align:left;">Class</th>' +
+        Object.keys(matrix[0].topic_percent).map(t => `<th>${t}</th>`).join('');
+      coverageBody.innerHTML = '';
+      matrix.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="padding:4px 6px; font-weight:600;">${row.class}</td>` +
+          Object.entries(row.topic_percent).map(([t, v]) => {
+            const shade = v > 70 ? '#34d399' : v > 40 ? '#f59e0b' : '#6b7280';
+            return `<td style="padding:4px 6px; color:${shade};">${v}%</td>`;
+          }).join('');
+        coverageBody.appendChild(tr);
+      });
+    }
+
+    function renderOmissions(diff) {
+      omissionsList.innerHTML = '';
+      diff.merged.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        omissionsList.appendChild(li);
+      });
+      if (diff.merged.length === 0) {
+        omissionsList.innerHTML = '<li>None detected</li>';
+      }
+    }
+
+    function renderEntityStance(entity) {
+      stanceContainer.innerHTML = '';
+      Object.entries(entity.entity_stance || {}).forEach(([cls, ents]) => {
+        const block = document.createElement('div');
+        block.style.marginBottom = '8px';
+        const lines = Object.entries(ents).map(([e, stats]) => {
+          const val = stats.avg_sentiment;
+          const color = val > 0.2 ? '#34d399' : val < -0.2 ? '#fb7185' : '#f59e0b';
+          return `<div style="display:flex; justify-content:space-between; font-size:0.7rem;">
+            <span>${e}</span><span style="color:${color}">${val.toFixed(2)} (${stats.mentions})</span></div>`;
+        }).join('');
+        block.innerHTML = `<div style="font-weight:600; font-size:0.75rem;">${cls}</div>${lines}`;
+        stanceContainer.appendChild(block);
+      });
+      if (!stanceContainer.innerHTML) stanceContainer.textContent = 'No entity mentions.';
+    }
+
+    function applyPayload(data) {
+      statusEl.textContent = 'Data loaded.';
+      renderScale(data.scale_of_censorship || 0);
+      renderCards(data.source_angle_cards || []);
+      if ((data.coverage_matrix_percent || []).length) renderCoverage(data.coverage_matrix_percent);
+      renderOmissions(data.omissions_diff || { merged: [] });
+      renderEntityStance({ entity_stance: (data.entity_stance || {}) });
+    }
+
+    queryForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = queryInput.value.trim();
+      if (!q) { statusEl.textContent = 'Enter a query.'; return; }
+      const max = resultsSelect.value;
+      const length = lengthSelect.value;
+      statusEl.textContent = 'Fetching…';
+      fetch(`http://127.0.0.1:8000/radar?query=${encodeURIComponent(q)}&max_results=${max}&response_length=${length}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.dashboard) {
+            applyPayload(data.dashboard);
+            statusEl.textContent = `Loaded ${data.results} articles.`;
+          } else {
+            statusEl.textContent = 'Unexpected payload.';
+          }
+        })
+        .catch(err => { statusEl.textContent = 'Request failed: ' + err; });
+    });
+  </script>
+</body>
+
+</html>

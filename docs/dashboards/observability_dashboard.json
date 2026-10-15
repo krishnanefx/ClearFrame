@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-16T01:59:08.248565+00:00",
+    "langsmith_enabled": false,
+    "langsmith_project": "default",
+    "total_traces": 5,
+    "total_failures": 1
+  },
+  "metrics": {
+    "summary": {
+      "total_executions": 5,
+      "successful_executions": 4,
+      "failed_executions": 1,
+      "success_rate": 80.0,
+      "failure_rate": 20.0,
+      "uptime_percentage": 80.0
+    },
+    "performance": {
+      "average_latency_ms": 0.01,
+      "p95_latency_ms": 0.02,
+      "p99_latency_ms": 0.02,
+      "slowest_operations": [
+        {
+          "query": "Query 1: AI regulation news",
+          "latency_ms": 0.022,
+          "trace_id": "trace_1763258348.247631"
+        },
+        {
+          "query": "Query 2: AI regulation news",
+          "latency_ms": 0.005,
+          "trace_id": "trace_1763258348.247856"
+        },
+        {
+          "query": "Query 3: AI regulation news",
+          "latency_ms": 0.004,
+          "trace_id": "trace_1763258348.247864"
+        },
+        {
+          "query": "Query 4: AI regulation news",
+          "latency_ms": 0.004,
+          "trace_id": "trace_1763258348.247869"
+        },
+        {
+          "query": "Query 5: AI regulation news",
+          "latency_ms": 0.003,
+          "trace_id": "trace_1763258348.247873"
+        }
+      ]
+    },
+    "cost": {
+      "total_cost_usd": 0.075,
+      "average_cost_usd": 0.015,
+      "most_expensive_operations": [
+        {
+          "query": "Query 5: AI regulation news",
+          "cost_usd": 0.025,
+          "trace_id": "trace_1763258348.247873"
+        },
+        {
+          "query": "Query 4: AI regulation news",
+          "cost_usd": 0.02,
+          "trace_id": "trace_1763258348.247869"
+        },
+        {
+          "query": "Query 3: AI regulation news",
+          "cost_usd": 0.015,
+          "trace_id": "trace_1763258348.247864"
+        },
+        {
+          "query": "Query 2: AI regulation news",
+          "cost_usd": 0.01,
+          "trace_id": "trace_1763258348.247856"
+        },
+        {
+          "query": "Query 1: AI regulation news",
+          "cost_usd": 0.005,
+          "trace_id": "trace_1763258348.247631"
+        }
+      ]
+    },
+    "failures": {
+      "by_category": {
+        "rate_limit_error": 1
+      },
+      "by_severity": {
+        "high": 1
+      }
+    },
+    "quality": {
+      "average_confidence": "medium",
+      "reasoning_quality_score": 0.0
+    }
+  },
+  "recent_executions": [
+    {
+      "trace_id": "trace_1763258348.247631",
+      "query": "Query 1: AI regulation news",
+      "timestamp": "2025-11-16T01:59:08.247832+00:00",
+      "duration_ms": 0.022,
+      "status": "success",
+      "spans_count": 1
+    },
+    {
+      "trace_id": "trace_1763258348.247856",
+      "query": "Query 2: AI regulation news",
+      "timestamp": "2025-11-16T01:59:08.247857+00:00",
+      "duration_ms": 0.005,
+      "status": "success",
+      "spans_count": 1
+    },
+    {
+      "trace_id": "trace_1763258348.247864",
+      "query": "Query 3: AI regulation news",
+      "timestamp": "2025-11-16T01:59:08.247864+00:00",
+      "duration_ms": 0.004,
+      "status": "success",
+      "spans_count": 1
+    },
+    {
+      "trace_id": "trace_1763258348.247869",
+      "query": "Query 4: AI regulation news",
+      "timestamp": "2025-11-16T01:59:08.247869+00:00",
+      "duration_ms": 0.004,
+      "status": "success",
+      "spans_count": 1
+    },
+    {
+      "trace_id": "trace_1763258348.247873",
+      "query": "Query 5: AI regulation news",
+      "timestamp": "2025-11-16T01:59:08.247874+00:00",
+      "duration_ms": 0.003,
+      "status": "success",
+      "spans_count": 1
+    }
+  ],
+  "failure_details": [
+    {
+      "failure_id": "failure_1763258348.248501",
+      "query": "Failed query",
+      "timestamp": "2025-11-16T01:59:08.247879+00:00",
+      "category": "rate_limit_error",
+      "severity": "high",
+      "root_cause": "Rate Limit Error: API rate limit exceeded",
+      "remediation_steps": [
+        "Implement exponential backoff retry logic",
+        "Check API quota and limits",
+        "Reduce request frequency"
+      ]
+    }
+  ],
+  "langsmith_links": []
+}
