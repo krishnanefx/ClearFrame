@@ -1,0 +1,36 @@
+{
+  "_note": "Synthetic articles written for this demo. The outlets and events are fictional; .example domains are reserved and resolve nowhere.",
+  "query": "city council transit fare increase",
+  "articles": [
+    {
+      "title": "Council approves 15% transit fare rise after three-hour debate",
+      "description": "The city council voted 7-4 on Tuesday to raise bus and tram fares from March. According to the transport department, the increase will cover a projected budget gap. Opponents say low-income riders will be hit hardest, while supporters argue the alternative was cutting routes.",
+      "source": "metro-ledger.example",
+      "url": "https://metro-ledger.example/news/fare-vote"
+    },
+    {
+      "title": "Fare hike is a shocking betrayal of working families",
+      "description": "Outraged riders say the council has once again sided with corporate greed over workers rights. Activists warn the devastating increase deepens wealth inequality and demand affordable public services and a living wage for transit staff.",
+      "source": "peoples-voice.blog.example",
+      "url": "https://peoples-voice.blog.example/fare-betrayal"
+    },
+    {
+      "title": "Taxpayers rescued from transit spending spree, for now",
+      "description": "The council finally showed some fiscal responsibility, but critics argue the bloated transit agency still needs deregulation and a free market approach. Conservative members warned that government overreach and the tax burden on families remain unchecked.",
+      "source": "free-enterprise-daily.example",
+      "url": "https://free-enterprise-daily.example/transit-spending"
+    },
+    {
+      "title": "What the new fares mean for your commute",
+      "description": "A single bus ticket will rise from 2.00 to 2.30. Monthly passes go up by 8 dollars. Discounts for students and seniors are unchanged, the transport department said.",
+      "source": "commuter-guide.example",
+      "url": "https://commuter-guide.example/fares-explained"
+    },
+    {
+      "title": "Transit union threatens strike as council ignores displaced night-shift workers",
+      "description": "Union leaders said the vote was clearly made without consulting staff. Officials have not responded to requests for comment. Protest organisers plan a rally outside city hall on Friday.",
+      "source": "labour-wire.example",
+      "url": "https://labour-wire.example/strike-threat"
+    }
+  ]
+}
